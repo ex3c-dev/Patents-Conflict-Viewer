@@ -1,6 +1,9 @@
 # infoviz
 
 ## Project setup
+
+Install node.js version 16.13.0. Clone project & install dependencies with the following command.
+
 ```
 npm install
 ```
