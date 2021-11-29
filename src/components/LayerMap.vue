@@ -21,6 +21,7 @@
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
+      <Timeline class="timeline"></Timeline>
     </vl-map>
   </div>
 </template>
@@ -28,13 +29,15 @@
 <script>
 import Vue from 'vue'
 import VueLayers from 'vuelayers'
-import 'vuelayers/lib/style.css' // needs css-loader
+import 'vuelayers/lib/style.css'
+import Timeline from "./Timeline"; // needs css-loader
 
 Vue.use(VueLayers)
 
 export default {
   name: "LayerMap",
   components: {
+    Timeline
 
   },
   data () {
@@ -49,5 +52,9 @@ export default {
 </script>
 
 <style scoped>
-
+.timeline{
+  position: absolute;
+  margin: 42% ;
+  margin-left: 30%;
+}
 </style>

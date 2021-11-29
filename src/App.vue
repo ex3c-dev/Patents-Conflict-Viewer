@@ -15,7 +15,7 @@
     </v-main>
 
     <v-footer padless dark>
-      <v-card-text class="py-2 white--text text-center">
+      <v-card-text clas s="py-2 white--text text-center">
         {{ new Date().getFullYear() }} — <strong>Julia Glöß, Johanna Carolina Gerhardt, Tobias Theus, Nina Wüst</strong>
       </v-card-text>
     </v-footer>
@@ -43,14 +43,6 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-}
 
 .filter-container{
   position: relative;
