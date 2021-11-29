@@ -63,12 +63,15 @@ export default {
 .map-container{
   position: relative;
   display: inline-block;
-  height: 80%;
+  height: 65%;
+  min-height: 50%;
   width: 80%;
   float: left;
 }
 
 .legend{
   width: 80%;
+  height: 35%;
+  overflow: hidden;
 }
 </style>
