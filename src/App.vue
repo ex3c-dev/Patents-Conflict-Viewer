@@ -1,22 +1,45 @@
 <template>
-  <div id="app">
-    <Map style="height: 80%; width: 80%" class="map-container"></Map>
-    <div class="filter-container">
-      <h3>Filter</h3>
-    </div>
-    <div class="legend">Legende</div>
-  </div>
+
+  <v-app>
+    <v-app-bar app color="primaryDark" dark>
+      <div class="d-flex align-center">
+        <v-img alt="Vuetify Logo" class="shrink mr-2" contain src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png" transition="scale-transition" width="40"/>
+        <v-img alt="Vuetify Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100" src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png" width="100"/>
+      </div>
+    </v-app-bar>
+
+    <v-main>
+      <LayerMap class="map-container"></LayerMap>
+      <FilterBar class="filter-container"></FilterBar>
+      <Legend class="legend"></Legend>
+    </v-main>
+
+    <v-footer padless dark>
+      <v-card-text class="py-2 white--text text-center">
+        {{ new Date().getFullYear() }} — <strong>Julia Glöß, Johanna Carolina Gerhardt, Tobias Theus, Nina Wüst</strong>
+      </v-card-text>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-import Map from './components/Map.vue'
+import LayerMap from "./components/LayerMap";
+import FilterBar from "./components/FilterBar";
+import Legend from "./components/Legend";
 
 export default {
   name: 'App',
+
   components: {
-    Map
-  }
-}
+    Legend,
+    FilterBar,
+    LayerMap,
+  },
+
+  data: () => ({
+    //
+  }),
+};
 </script>
 
 <style>
@@ -24,9 +47,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: white;
-  background-color: #EDEDED;
   position: absolute;
   height: 100%;
   width: 100%;
@@ -36,21 +56,19 @@ export default {
   position: relative;
   display: inline-block;
   width: 20%;
-  background-color: #39597D;
+  min-width: 20%;
   float: right;
 }
 
 .map-container{
   position: relative;
   display: inline-block;
+  height: 80%;
+  width: 80%;
+  float: left;
 }
 
 .legend{
-  position: relative;
-  width: 100%;
-  min-height: 20%;
-  background-color: #EDEDED;
-  color: #5A6C76;
-  transform: translateY(-4px);
+  width: 80%;
 }
 </style>
