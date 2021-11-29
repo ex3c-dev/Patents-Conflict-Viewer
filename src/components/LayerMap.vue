@@ -54,7 +54,7 @@ export default {
 <style scoped>
 .timeline{
   position: absolute;
-  margin: 42% ;
+  margin: 33% ;
   margin-left: 30%;
 }
 </style>
