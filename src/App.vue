@@ -3,8 +3,8 @@
   <v-app>
     <v-app-bar app color="primaryDark" dark>
       <div class="d-flex align-center">
-        <v-img alt="Vuetify Logo" class="shrink mr-2" contain src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png" transition="scale-transition" width="40"/>
-        <v-img alt="Vuetify Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100" src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png" width="100"/>
+        <v-img alt="Team16 Logo" class="shrink mr-2" contain src="./assets/logo2.png" transition="scale-transition" width="40"/>
+        <v-img alt="Team16 Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100" src="./assets/team16.png" width="100"/>
       </div>
     </v-app-bar>
 
@@ -15,7 +15,7 @@
     </v-main>
 
     <v-footer padless dark>
-      <v-card-text clas s="py-2 white--text text-center">
+      <v-card-text class="py-2 white--text text-center">
         {{ new Date().getFullYear() }} — <strong>Julia Glöß, Johanna Carolina Gerhardt, Tobias Theus, Nina Wüst</strong>
       </v-card-text>
     </v-footer>

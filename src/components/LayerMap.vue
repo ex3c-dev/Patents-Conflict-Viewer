@@ -14,7 +14,7 @@
           </vl-feature>
         </template>
       </vl-geoloc>
-      <vl-feature>
+      <vl-feature id="circle">
         <vl-geom-circle :coordinates="[11.576, 48.137]" :radius="20000"></vl-geom-circle>
       </vl-feature>
 
@@ -46,6 +46,7 @@ export default {
       center: [11.576, 48.137],
       rotation: 0,
       geolocPosition: undefined,
+      selectedFeatures: [],
     }
   },
 }
