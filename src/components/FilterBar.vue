@@ -43,8 +43,8 @@ export default {
   },
   data: () => ({
     items: [
-      ['mdi-briefcase', 'Patent Type', PatentFilters],
-      ['mdi-layers', 'Regions', TestComponent],
+      ['mdi-briefcase', 'Patent Type', TestComponent],
+      ['mdi-layers', 'Regions', PatentFilters],
       ['mdi-format-list-bulleted-type', 'Conflict Type', TestComponent],
       ['mdi-human', 'Conflict Instigator', TestComponent],
     ],
