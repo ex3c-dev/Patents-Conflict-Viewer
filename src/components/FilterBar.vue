@@ -33,6 +33,7 @@
 <script>
 import TestComponent from "./TestComponent"; // needs css-loader
 import PatentFilters from "@/components/PatentFilters";
+import PatentTypeFilter from "@/components/PatentTypeFilter";
 
 
 export default {
@@ -43,7 +44,7 @@ export default {
   },
   data: () => ({
     items: [
-      ['mdi-briefcase', 'Patent Type', TestComponent],
+      ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
       ['mdi-format-list-bulleted-type', 'Conflict Type', TestComponent],
       ['mdi-human', 'Conflict Instigator', TestComponent],
