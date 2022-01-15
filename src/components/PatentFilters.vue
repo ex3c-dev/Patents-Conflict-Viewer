@@ -1,6 +1,7 @@
 <template>
   <div class="card text-center m-3">
 
+
     <v-autocomplete
         v-model="selCountries"
         :items="countryList"
@@ -29,19 +30,27 @@
         solo
     ></v-autocomplete>
 
+    <patent-type-filter :test=this.selCountries />
+
   -->
 
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+//import axios from 'axios';
 import countryList from "../countryList.json";
+import {bus} from "@/main";
+//import {bus} from "@/main";
 //const cities = require('all-the-cities');
+
+var test1
+
+export {test1}
 
 export default {
   name: "PatentFilters",
-
+  //components: {PatentTypeFilter},
   data() {
     return {
       baseUrl: "http://84.252.122.16:3000/geoc_app?",
@@ -58,8 +67,13 @@ export default {
     };
   },
 
+
   watch: {
     selCountries: async function () {
+
+      bus.$emit('selected-countries', this.selCountries)
+      /*
+
       if (this.selCountries.length === 0) {
       this.citySearchStr = ""
       this.request = this.baseUrl + this.citySearchStr + "&&filing_date=lte.2007-03-01" + "&&filing_date=gte.2007-02-27"
@@ -97,6 +111,10 @@ export default {
           console.error("There was an error!", error)
         })
   },
+
+     */},}
+
+
 };
 
 </script>

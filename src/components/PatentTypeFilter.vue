@@ -13,19 +13,20 @@
       small-chips
       solo
   ></v-autocomplete>
-
 </div>
-
 </template>
-
 <script>
 
-import axios from "axios";
+//import axios from "axios";
 import typelist from "../types.json";
+import {bus} from "@/main";
+
 
 
 export default {
   name: "PatentTypeFilter",
+
+  props: ['test'],
 
   data() {
     return {
@@ -39,30 +40,8 @@ export default {
   watch: {
     selSections: async function () {
 
-      if (this.sectionList.length === 0) {
-        this.typeSearchStr = ""
-        this.request = this.baseUrl + this.typeSearchStr
-      }
+      bus.$emit('selected-types', this.selSections)
 
-      else {
-        this.typeSearchStr = "select=id&&"
-        this.typeSearchStr += "or=(ipc_class_symbol.like." + this.selSections[0] + "*"
-        this.selSections.forEach((type) => {this.typeSearchStr += (",ipc_class_symbol.like." + type + "*")})
-        //TODO either page or remove hardcoded limit.
-        this.typeSearchStr += (")&&limit=2000")
-        this.request = this.baseUrl + this.typeSearchStr
-
-      }
-      await axios.get(this.request)
-          .then(response => {
-                this.countryFilter = response.data;
-                console.log("Fetched: " + this.countryFilter.length + " results")
-              }
-          )
-          .catch(error => {
-            this.errorMessage = error.message;
-            console.error("There was an error!", error)
-          })
     }
   },
 
