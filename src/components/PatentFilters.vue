@@ -1,6 +1,7 @@
 <template>
   <div class="card text-center m-3">
 
+
     <v-autocomplete
         v-model="selCountries"
         :items="countryList"
@@ -14,6 +15,7 @@
         small-chips
         solo
     ></v-autocomplete>
+    <!-- Document Header Starts
     <v-autocomplete
         v-model="selCities"
         :items="cityList"
@@ -28,17 +30,25 @@
         solo
     ></v-autocomplete>
 
+    <patent-type-filter :test=this.selCountries />
+
+  -->
+
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import countryList from "../countryList.json";
+import {bus} from "@/main";
 //const cities = require('all-the-cities');
 
+var test1
+
+export {test1}
+
+//TODO: create new country list and add missing countries / countries with alternate names from USD database
 export default {
   name: "PatentFilters",
-
   data() {
     return {
       baseUrl: "http://84.252.122.16:3000/geoc_app?",
@@ -55,45 +65,15 @@ export default {
     };
   },
 
+
   watch: {
     selCountries: async function () {
-      if (this.selCountries.length === 0) {
-      this.citySearchStr = ""
-      this.request = this.baseUrl + this.citySearchStr + "&&filing_date=lte.2007-03-01" + "&&filing_date=gte.2007-02-27"
-    }
 
-    else {
-        this.citySearchStr = "or=(name_0.eq." + this.selCountries[0]
-        this.selCountries.forEach((country) => {this.citySearchStr += (",name_0.eq." + country)})
-        this.citySearchStr += (")")
-        this.request = this.baseUrl + this.citySearchStr + "&&filing_date=lte.2007-03-01" + "&&filing_date=gte.2007-02-27"
-      }
+      bus.$emit('selected-countries', this.selCountries)
+    },
+  }
 
-      await axios.get(this.request)
-          .then(response => {
-                this.countryFilter = response.data;
-                console.log("Fetched: " + this.countryFilter.length + " results")
-              }
-          )
-          .catch(error => {
-            this.errorMessage = error.message;
-            console.error("There was an error!", error)
-          })
-    }
-  },
 
-  //TEST, not actually used yet
-  async created() {
-    await axios.get("http://84.252.122.16:3000/tls209?appln_id=eq.45732519")
-    .then(response => {
-          this.testRequest = response.data[0].id
-        }
-    )
-        .catch(error => {
-          this.errorMessage = error.message;
-          console.error("There was an error!", error)
-        })
-  },
 };
 
 </script>
