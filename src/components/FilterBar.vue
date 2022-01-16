@@ -38,7 +38,9 @@ import {bus} from "@/main";
 import axios from "axios";
 import countryList from "@/countryList.json";
 import typelist from "@/types.json";
-
+import ConflictTypeFilter from "@/components/ConflictInstigatorFilter";
+import ConflictTargetFilter from "@/components/ConflictTargetFilter";
+import conflictData from "../USD_data.json";
 
 export default {
   name: "FilterBar",
@@ -55,6 +57,19 @@ export default {
     bus.$on('selected-types', (selSections) => {
       this.selSections = selSections
     })
+    bus.$on('selected-instigagors', (selInstigators) => {
+      this.selInstigators = selInstigators
+    })
+    bus.$on('selected-targets', (selTargets) => {
+      this.selTargets = selTargets
+    })
+
+    conflictData.forEach((event) => {this.instigatorList.push(event.ACTOR1)})
+    conflictData.forEach((event) => {this.targetList.push(event.TARGET1)})
+
+    //Returns all conflict data, as yet unfiltered, for the initial visualization. TODO: when patent server goes up, do the same for patent data
+    this.filterEvents()
+
   },
 
   data: () => ({
@@ -64,23 +79,30 @@ export default {
     geoc: "geoc_app?",
     request: "",
     countryList: countryList,
+    instigatorList : [],
+    targetList: [],
     selCountries:[],
     sectionList: typelist,
     selSections: [],
     sectionFilterIDs:[],
     countryFilterIDs: [],
     responseIDs: [],
+    selTargets: [],
+    selInstigators: [],
+    filteredEvents:[],
     items: [
       ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
-      ['mdi-format-list-bulleted-type', 'Conflict Type', TestComponent],
-      ['mdi-human', 'Conflict Instigator', TestComponent],
+      ['mdi-format-list-bulleted-type', 'Conflict Instigator', ConflictTypeFilter],
+      ['mdi-human', 'Conflict Target', ConflictTargetFilter],
     ],
   }),
 
   //TODO: Somewhere some id filter list needs to be emptied.
   watch: {
     selCountries: async function () {
+
+      //Prepare request string
       this.countryFilterIDs = []
       this.typeSearchStr = ""
 
@@ -108,17 +130,20 @@ export default {
       //Create Request
       this.request = this.baseUrl + this.geoc+ this.citySearchStr + this.typeSearchStr + "&&limit=2000" //"&&filing_date=lte.2007-03-01" + "&&filing_date=gte.2007-02-27"
 
-      console.log("Request is: "  + this.request)
+     // console.log("Request is: "  + this.request)
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
         if (response !== undefined)
           response.forEach((id) => {this.countryFilterIDs.push(id.appln_id)})
       })
+
+      this.filterEvents()
     },
 
     selSections: async function () {
 
+      //Prepare request string
       this.typeSearchStr = ""
       this.sectionFilterIDs = []
 
@@ -143,7 +168,7 @@ export default {
         //Create Request
         this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000"
 
-        console.log("Request is: "  + this.request)
+        //console.log("Request is: "  + this.request)
       }
 
       //Send request and save filtered IDS for further filtering
@@ -151,10 +176,41 @@ export default {
         if (response !== undefined)
             response.forEach((type) => {this.sectionFilterIDs.push(type.appln_id)})
       })
+    },
+
+    selInstigators: function () {
+
+     this.filterEvents()
+    },
+
+    selTargets: function () {
+
+      this.filterEvents()
     }
 },
 
   methods: {
+
+    filterEvents() {
+
+      let str1, str2, str3
+
+      if (this.selCountries.length < 1) str1 = this.countryList
+      else str1 = this.selCountries
+      if (this.selInstigators.length < 1) str2 = this.instigatorList
+      else str2 = this.selInstigators
+      if (this.selTargets.length < 1) str3 = this.targetList
+      else str3 = this.selTargets
+
+      //TODO: add filter for date from timeline
+      var data = conflictData,
+          filterBy = { COUNTRY: str1, ACTOR1: str2, TARGET1: str3},
+          result = data.filter(object => Object.keys(filterBy).every(key => filterBy[key].some(filter => object[key] === filter)));
+
+      //Filtered USD database entries
+      console.log(result);
+    },
+
     formatIDfilter(ids) {
       let str = ""
       if(ids !== undefined && ids.length > 0) {
@@ -191,15 +247,14 @@ export default {
 </style>
 
 
+
+//working test queries for sanity check.
 //http://84.252.122.16:3000/tls209?ipc_class_symbol=like.F*&&limit=600
-
-
 
 
 //http://84.252.122.16:3000/tls209?ipc_class_symbol=like.A*&&limit=600
 //http://84.252.122.16:3000/tls209?ipc_class_symbol=in.(E06B   3/70,F16H  37/12)*&&limit=600
 //http://84.252.122.16:3000/tls209?ipc_class_symbol=in.(E06B   3/70,F16H  37/12)&&and=(ipc_position.eq.F)&&limit=600
-
 
 
 //http://84.252.122.16:3000/tls209?or=(ipc_class_symbol.like.A*, ipc_class_symbol.like.B*))&&ipc_position=in.(F)&&limit=600

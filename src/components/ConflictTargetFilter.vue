@@ -1,8 +1,8 @@
-<template><div class="patent-type-input">
+<template><div class="target-type-input">
 
   <v-autocomplete
-      v-model="InstigatorTypes"
-      :items="InstigatorList"
+      v-model="TargetTypes"
+      :items="TargetList"
       label="Choose as many types as you want"
       auto-select-first
       clearable
@@ -15,33 +15,35 @@
   ></v-autocomplete>
 </div>
 </template>
-<script>
 
+
+<script>
 //import axios from "axios";
 import conflictData from "../USD_data.json";
 import {bus} from "@/main";
-
-
-
 export default {
-  name: "ConflictTypeFilter",
+  name: "ConflictTargetFilter",
 
-  props: ['test'],
+  created() {
+
+    conflictData.forEach((event) => {this.TargetList.push(event.TARGET1)})
+    console.log(this.list)
+  },
 
   data() {
     return {
       baseUrl: "http://84.252.122.16:3000/tls209?",
       request: "",
-      InstigatorList: conflictData,
-      InstigatorTypes: [],
+      TargetList: [],
+      TargetTypes: [],
     };
   },
 
   watch: {
-    selSections: async function () {
+    TargetTypes: async function () {
 
-      bus.$emit('selected-types', this.selSections)
-
+      bus.$emit('selected-targets', this.TargetTypes)
+      //console.log("Selected:" + this.TargetTypes)
     }
   },
 

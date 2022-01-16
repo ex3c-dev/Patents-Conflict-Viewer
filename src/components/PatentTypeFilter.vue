@@ -17,7 +17,6 @@
 </template>
 <script>
 
-//import axios from "axios";
 import typelist from "../types.json";
 import {bus} from "@/main";
 
