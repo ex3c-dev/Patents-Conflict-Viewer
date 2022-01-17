@@ -19,6 +19,7 @@
         {{ new Date().getFullYear() }} — <strong>Julia Glöß, Johanna Carolina Gerhardt, Tobias Theus, Nina Wüst</strong>
       </v-card-text>
     </v-footer>
+    <D3TestComponent></D3TestComponent>
   </v-app>
 </template>
 
@@ -26,6 +27,7 @@
 import LayerMap from "./components/LayerMap";
 import FilterBar from "./components/FilterBar";
 import Legend from "./components/Legend";
+import D3TestComponent from "@/components/D3TestComponent";
 
 export default {
   name: 'App',
@@ -34,6 +36,7 @@ export default {
     Legend,
     FilterBar,
     LayerMap,
+    D3TestComponent,
   },
 
   data: () => ({
