@@ -41,7 +41,6 @@ import typelist from "@/types.json";
 import ConflictTypeFilter from "@/components/ConflictInstigatorFilter";
 import ConflictTargetFilter from "@/components/ConflictTargetFilter";
 import conflictData from "../USD_data.json";
-
 export default {
   name: "FilterBar",
   components: {
@@ -53,15 +52,23 @@ export default {
 
     bus.$on('selected-countries', (selCountries) => {
       this.selCountries = selCountries
+      this.filterEvents()
+    })
+    bus.$on('change', (from, to) => {
+      this.dateTo = to
+      this.dateFrom = from
+      this.filterEvents()
     })
     bus.$on('selected-types', (selSections) => {
       this.selSections = selSections
     })
     bus.$on('selected-instigagors', (selInstigators) => {
       this.selInstigators = selInstigators
+      this.filterEvents()
     })
     bus.$on('selected-targets', (selTargets) => {
       this.selTargets = selTargets
+      this.filterEvents()
     })
 
     conflictData.forEach((event) => {this.instigatorList.push(event.ACTOR1)})
@@ -90,6 +97,8 @@ export default {
     selTargets: [],
     selInstigators: [],
     filteredEvents:[],
+    dateFrom: "1960-1-1",
+    dateTo: "2016-12-31",
     items: [
       ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
@@ -100,6 +109,7 @@ export default {
 
   //TODO: Somewhere some id filter list needs to be emptied.
   watch: {
+
     selCountries: async function () {
 
       //Prepare request string
@@ -108,7 +118,8 @@ export default {
 
       if (this.selCountries.length === 0) {
         this.citySearchStr = ""
-        this.request = this.baseUrl + this.geoc + this.citySearchStr + "&&limit=2000" //"&&filing_date=lte.2007-03-01" + "&&filing_date=gte.2007-02-27"
+        //TODO: when Server is up for testing, try range operator instead on date filter
+        this.request = this.baseUrl + this.geoc + this.citySearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
       }
 
       else {
@@ -128,17 +139,21 @@ export default {
       }
 
       //Create Request
-      this.request = this.baseUrl + this.geoc+ this.citySearchStr + this.typeSearchStr + "&&limit=2000" //"&&filing_date=lte.2007-03-01" + "&&filing_date=gte.2007-02-27"
+      //TODO: when Server is up, test date range
+      this.request = this.baseUrl + this.geoc+ this.citySearchStr + this.typeSearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
 
-     // console.log("Request is: "  + this.request)
+     console.log("Request is: "  + this.request)
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
-        if (response !== undefined)
-          response.forEach((id) => {this.countryFilterIDs.push(id.appln_id)})
-      })
+        if (response !== undefined) {
 
-      this.filterEvents()
+          response.forEach((id) => {this.countryFilterIDs.push(id.appln_id)})
+
+          //emit filtered Patents
+          bus.$emit('filtered-Patent-IDs', this.countryFilterIDs)
+        }
+      })
     },
 
     selSections: async function () {
@@ -148,7 +163,7 @@ export default {
       this.sectionFilterIDs = []
 
       if (this.selSections.length === 0) {
-        this.request = this.baseUrl + this.tls + "&&limit=200"
+        this.request = this.baseUrl + this.tls + "&&limit=200"//   + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
       }
 
       else {
@@ -166,34 +181,34 @@ export default {
         }
 
         //Create Request
-        this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000"
+        this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000" // + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
 
         //console.log("Request is: "  + this.request)
       }
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
-        if (response !== undefined)
-            response.forEach((type) => {this.sectionFilterIDs.push(type.appln_id)})
+        if (response !== undefined) {
+
+          response.forEach((type) => {
+            this.sectionFilterIDs.push(type.appln_id)
+          })
+
+          //emit filtered Patents
+          bus.$emit('filtered-Patent-IDs', this.sectionFilterIDs)
+        }
       })
     },
-
-    selInstigators: function () {
-
-     this.filterEvents()
-    },
-
-    selTargets: function () {
-
-      this.filterEvents()
-    }
 },
 
   methods: {
 
     filterEvents() {
 
+      //Prepare filter values
       let str1, str2, str3
+      let fromDate = new Date(this.dateFrom)
+      let toDate = new Date(this.dateTo)
 
       if (this.selCountries.length < 1) str1 = this.countryList
       else str1 = this.selCountries
@@ -202,13 +217,24 @@ export default {
       if (this.selTargets.length < 1) str3 = this.targetList
       else str3 = this.selTargets
 
-      //TODO: add filter for date from timeline
-      var data = conflictData,
+      //filter USD Database
+      let data = conflictData,
           filterBy = { COUNTRY: str1, ACTOR1: str2, TARGET1: str3},
           result = data.filter(object => Object.keys(filterBy).every(key => filterBy[key].some(filter => object[key] === filter)));
 
-      //Filtered USD database entries
-      console.log(result);
+      //TODO: solve this in a more elegant way if possible.
+      //TODO: Fix Bug
+      let filteredUSD = result.filter(function (event) {
+        return event.BYEAR >= fromDate.getFullYear() && !(event.BYEAR > toDate.getFullYear());
+      });
+
+      console.log("USD has " + filteredUSD.length + " matches");
+      console.log(filteredUSD[0])
+      console.log(filteredUSD[filteredUSD.length-1])
+
+
+      //Emit Filtered USD database entries
+      bus.$emit('filtered-USD', filteredUSD)
     },
 
     formatIDfilter(ids) {
@@ -245,16 +271,3 @@ export default {
 <style scoped>
 
 </style>
-
-
-
-//working test queries for sanity check.
-//http://84.252.122.16:3000/tls209?ipc_class_symbol=like.F*&&limit=600
-
-
-//http://84.252.122.16:3000/tls209?ipc_class_symbol=like.A*&&limit=600
-//http://84.252.122.16:3000/tls209?ipc_class_symbol=in.(E06B   3/70,F16H  37/12)*&&limit=600
-//http://84.252.122.16:3000/tls209?ipc_class_symbol=in.(E06B   3/70,F16H  37/12)&&and=(ipc_position.eq.F)&&limit=600
-
-
-//http://84.252.122.16:3000/tls209?or=(ipc_class_symbol.like.A*, ipc_class_symbol.like.B*))&&ipc_position=in.(F)&&limit=600
