@@ -52,6 +52,7 @@ export default {
 
     bus.$on('selected-countries', (selCountries) => {
       this.selCountries = selCountries
+      this.filterPatents()
       this.filterEvents()
     })
     bus.$on('change', (from, to) => {
@@ -76,7 +77,6 @@ export default {
 
     //Returns all conflict data, as yet unfiltered, for the initial visualization. TODO: when patent server goes up, do the same for patent data
     this.filterEvents()
-
   },
 
   data: () => ({
@@ -110,81 +110,27 @@ export default {
   //TODO: Somewhere some id filter list needs to be emptied.
   watch: {
 
-    selCountries: async function () {
-
-      //Prepare request string
-      this.countryFilterIDs = []
-      this.typeSearchStr = ""
-
-      if (this.selCountries.length === 0) {
-        this.citySearchStr = ""
-        //TODO: when Server is up for testing, try range operator instead on date filter
-        this.request = this.baseUrl + this.geoc + this.citySearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
-      }
-
-      else {
-        this.citySearchStr = "select=appln_id&&"
-        //his.citySearchStr += "or=(name_0.eq." + this.selCountries[0]
-        //this.selCountries.forEach((country) => {if (this.selCountries[0]!= country) this.citySearchStr += (",name_0.eq." + country)})
-
-        this.citySearchStr += "name_0=in.(" + this.selCountries[0]
-        this.selCountries.forEach((country) => {if (this.selCountries[0]!== country) this.citySearchStr += ("," + country)})
-
-        this.citySearchStr += (")")
-      }
-
-      //Filter IDs that were selected in section filter
-      if(this.selSections.length > 0) {
-        this.typeSearchStr = this.formatIDfilter(this.sectionFilterIDs)
-      }
-
-      //Create Request
-      //TODO: when Server is up, test date range
-      this.request = this.baseUrl + this.geoc+ this.citySearchStr + this.typeSearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
-
-     console.log("Request is: "  + this.request)
-
-      //Send request and save filtered IDS for further filtering
-      this.sendRequest(this.request).then((response) => {
-        if (response !== undefined) {
-
-          response.forEach((id) => {this.countryFilterIDs.push(id.appln_id)})
-
-          //emit filtered Patents
-          bus.$emit('filtered-Patent-IDs', this.countryFilterIDs)
-        }
-      })
-    },
-
     selSections: async function () {
 
       //Prepare request string
       this.typeSearchStr = ""
       this.sectionFilterIDs = []
 
-      if (this.selSections.length === 0) {
-        this.request = this.baseUrl + this.tls + "&&limit=200"//   + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
-      }
-
-      else {
-        this.typeSearchStr = "select=appln_id&&"
-        this.typeSearchStr += "or=(ipc_class_symbol.like." + this.selSections[0] + "*"
-        this.selSections.forEach((type) => {this.typeSearchStr += (",ipc_class_symbol.like." + type + "*")})
+      if (this.selSections.length !== 0) {
+        this.typeSearchStr = "or=(ipc_class_symbol.like." + this.selSections[0] + "*"
+        this.selSections.forEach((type) => {
+          this.typeSearchStr += (",ipc_class_symbol.like." + type + "*")
+        })
         this.typeSearchStr += ")"
-
-        //TODO either page or remove hardcoded limit.
-
-        //Filter out IDs that were selected in Region filter
-        //Note: Some patents are however registered in multiple countries. Results for unfiltered Countries may therefore appear.
-        if(this.selCountries.length > 0) {
-          this.typeSearchStr += this.formatIDfilter(this.countryFilterIDs)
-        }
-
-        //Create Request
-        this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000" // + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
-
-        //console.log("Request is: "  + this.request)
       }
+
+      //Filter out IDs that were selected in Region filter
+      //Note: Some patents are however registered in multiple countries. Results for unfiltered Countries may therefore appear.
+      if(this.selCountries.length > 0) this.typeSearchStr += this.formatIDfilter(this.countryFilterIDs)
+
+      //Create Request
+      //TODO either page or remove hardcoded limit.
+      this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000" // + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
@@ -194,14 +140,48 @@ export default {
             this.sectionFilterIDs.push(type.appln_id)
           })
 
-          //emit filtered Patents
-          bus.$emit('filtered-Patent-IDs', this.sectionFilterIDs)
+          //get Patents from geoc table and get relevant geo data
+          this.filterPatents()
         }
       })
     },
 },
 
   methods: {
+
+    filterPatents: async function() {
+      //Prepare request string
+      this.countryFilterIDs = []
+      this.typeSearchStr = ""
+      this.regionSearchStr = ""
+
+      if (this.selCountries.length !== 0) {
+        this.regionSearchStr = "name_0=in.(" + this.selCountries[0]
+        this.selCountries.forEach((country) => {if (this.selCountries[0]!== country) this.regionSearchStr += ("," + country)})
+        this.regionSearchStr += (")")
+      }
+
+      //Filter IDs that were selected in section filter
+      if(this.selSections.length > 0) {
+        this.typeSearchStr = this.formatIDfilter(this.sectionFilterIDs)
+      }
+
+      //Create Request
+      //TODO: when Server is up, test date range
+      this.request = this.baseUrl + this.geoc+ this.regionSearchStr + this.typeSearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+      console.log(this.request)
+
+      //Send request and save filtered IDS for further filtering
+      this.sendRequest(this.request).then((response) => {
+        if (response !== undefined) {
+
+          response.forEach((id) => {this.countryFilterIDs.push(id.appln_id)})
+
+          //emit filtered Patents
+          bus.$emit('filtered-patents', response)
+        }
+      })
+    },
 
     filterEvents() {
 
@@ -229,9 +209,6 @@ export default {
       });
 
       console.log("USD has " + filteredUSD.length + " matches");
-      console.log(filteredUSD[0])
-      console.log(filteredUSD[filteredUSD.length-1])
-
 
       //Emit Filtered USD database entries
       bus.$emit('filtered-USD', filteredUSD)
@@ -254,8 +231,7 @@ export default {
       console.log("FETCHING")
       return axios.get(req)
           .then(response => {
-                console.log("Fetched " + response.data.length)
-                //response.data.forEach((type) => {this.responseIDs.push(type.appln_id)})
+                console.log("Fetched " + response.data.length + " results")
                 return response.data
               }
           )
@@ -266,6 +242,7 @@ export default {
     },
   }
 }
+
 </script>
 
 <style scoped>

@@ -25,7 +25,6 @@ export default {
 
   created() {
     conflictData.forEach((event) => {this.TargetList.push(event.TARGET1)})
-    console.log(this.list)
   },
 
   data() {

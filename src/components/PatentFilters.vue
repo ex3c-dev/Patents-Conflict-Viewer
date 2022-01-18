@@ -42,9 +42,6 @@ import countryList from "../countryList.json";
 import {bus} from "@/main";
 //const cities = require('all-the-cities');
 
-var test1
-
-export {test1}
 
 //TODO: create new country list and add missing countries / countries with alternate names from USD database
 export default {
@@ -65,15 +62,12 @@ export default {
     };
   },
 
-
   watch: {
     selCountries: async function () {
 
       bus.$emit('selected-countries', this.selCountries)
     },
   }
-
-
 };
 
 </script>
