@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
-    <v-card dark color="primary">
-      <v-card-subtitle>Point Layer</v-card-subtitle>
+    <v-card dark color="primary" class="overflow-x-hidden">
+      <v-card-subtitle>Cluster Layer</v-card-subtitle>
       <v-divider/>
       <v-container>
         <v-row
@@ -10,8 +10,8 @@
             :id="layer.ID"
             dense>
           <v-card-actions>
-            <v-icon x-small :color="layer.Color">mdi-checkbox-blank-circle</v-icon>
-            <v-btn color="white lighten-2" text v-text="layer.Text" height="10px"></v-btn>
+            <v-icon x-small :color="layer.Color">mdi-hexagon</v-icon>
+            <v-btn color="white lighten-2" class="card-item" text v-text="layer.Text" height="10px"></v-btn>
           </v-card-actions>
         </v-row>
       </v-container>
@@ -52,6 +52,9 @@ export default {
 <style scoped>
 .list {
   max-height: 200px;
+}
+.card-item {
+  overflow: hidden;
 }
 
 </style>

@@ -32,7 +32,27 @@
                 :position="pointOnSurface(feature.geometry)"
                 :auto-pan="true"
                 :auto-pan-animation="{duration: 300}">
-              <template slot-scope="popup">
+              <template>
+                <v-card v-if="feature.properties.type == 'event'">
+                  <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
+                  <v-card-title>Event: {{feature.properties.event.COUNTRY}} - {{feature.properties.event.CITY}}</v-card-title>
+                  <v-card-subtitle>{{feature.properties.event.ACTOR1}} vs {{feature.properties.event.TARGET1}}</v-card-subtitle>
+                  <v-card-actions>
+                    <v-btn color="orange lighten-2" text>Explore</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="show = !show">
+                      <v-icon>{{show ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+
+                  <v-expand-transition>
+                    <div v-show="show">
+                      <v-divider></v-divider>
+                      <v-card-text v-html="feature.properties.event.SUMMARY"> </v-card-text>
+                    </div>
+                  </v-expand-transition>
+                </v-card>
+                <!--
                 <v-card class="mx-auto" max-width="344">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
                   <v-card-title>Feature ID: {{feature.id}}</v-card-title>
@@ -49,11 +69,12 @@
                     <div v-show="show">
                       <v-divider></v-divider>
                       <v-card-text>
-                        Popup: {{popup}}
+                        Popup: {{popup}} {{feature}}
                       </v-card-text>
                     </div>
                   </v-expand-transition>
                 </v-card>
+                -->
               </template>
             </vl-overlay>
           </template>
@@ -76,6 +97,15 @@
           :id="cluster.id">
         <vl-geom-circle :coordinates="cluster.coordinates" :radius="cluster.radius" ></vl-geom-circle>
       </vl-feature>
+      <vl-feature
+          v-for="event in events"
+          :key="event.EVENTID"
+          :id="event.EVENTID"
+          :properties="{type: 'event', event: event}">
+          <vl-geom-point
+            :coordinates="[parseFloat(event.LONG), parseFloat(event.LAT)]">
+          </vl-geom-point>
+      </vl-feature>
 
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
@@ -96,7 +126,7 @@ import LegendCountryLayer from "@/components/LegendCountryLayer";
 import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
-
+import {bus} from "@/main";
 
 Vue.use(VueLayers)
 
@@ -111,8 +141,8 @@ export default {
   },
   data () {
     return {
-      zoom: 10,
-      center: [11.576, 48.137],
+      zoom: 4,
+      center: [12.576, 28.137],
       rotation: 0,
       geolocPosition: undefined,
       selectedFeatures: [],
@@ -120,11 +150,18 @@ export default {
       clusters: [
         {id: "München", coordinates: [11.576, 48.137], radius: 20000, description: ""},
         {id: "Köln",coordinates: [6.95, 50.93333], radius: 15000, description: ""}
-      ]
+      ],
+      events: [],
     }
   },
   methods: {
     pointOnSurface: findPointOnSurface,
+  },
+  created() {
+    bus.$on('filtered-USD', (data) => {
+      console.log(data);
+      this.events = data.slice(0, 200);
+    });
   }
 }
 </script>
