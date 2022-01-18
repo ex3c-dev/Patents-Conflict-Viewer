@@ -20,12 +20,8 @@
 import typelist from "../types.json";
 import {bus} from "@/main";
 
-
-
 export default {
   name: "PatentTypeFilter",
-
-  props: ['test'],
 
   data() {
     return {
@@ -43,8 +39,8 @@ export default {
 
     }
   },
-
 }
+
 </script>
 
 <style scoped>
