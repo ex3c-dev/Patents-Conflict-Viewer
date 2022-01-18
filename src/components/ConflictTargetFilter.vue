@@ -19,14 +19,12 @@
 
 
 <script>
-//import axios from "axios";
 import conflictData from "../USD_data.json";
 import {bus} from "@/main";
 export default {
   name: "ConflictTargetFilter",
 
   created() {
-
     conflictData.forEach((event) => {this.TargetList.push(event.TARGET1)})
     console.log(this.list)
   },
@@ -44,7 +42,6 @@ export default {
     TargetTypes: async function () {
 
       bus.$emit('selected-targets', this.TargetTypes)
-      //console.log("Selected:" + this.TargetTypes)
     }
   },
 

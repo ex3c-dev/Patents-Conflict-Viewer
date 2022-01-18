@@ -2,7 +2,7 @@
   <div id="app">
     <HistogramSlider
 
-        :bar-height="50"
+        :bar-height="100"
         :bar-width="3"
         :barRadius="3"
         :data="data"
@@ -15,8 +15,10 @@
         :handleColor="'#FF4B24'"
         :holderColor="'black'"
         :gridTextColor="'black'"
-        :min="new Date(2004, 11, 24).valueOf()"
-        :max="new Date(2018, 11, 24).valueOf()"
+        :min="new Date(1960, 1, 1).valueOf()"
+        :max="new Date(2014, 31, 12).valueOf()"
+        :change = "true"
+        @finish="sliderChanged"
     />
   </div>
 </template>
@@ -24,16 +26,34 @@
 <script>
 import HistogramSlider from "vue-histogram-slider";
 import "vue-histogram-slider/dist/histogram-slider.css";
-import data from "../data.json";
+import conflictData from "../USD_data.json";
+import {bus} from "@/main";
+
 
 export default {
 name: "Timeline",
+
   components: {
-  HistogramSlider,
+    HistogramSlider,
   },
-    data() {
+
+  created() {
+
+    //Format data for timeline histogram
+    let list =  []
+    conflictData.forEach((event) => {
+      let dateStr = event.BYEAR + "-" + event.BMONTH + "-" + event.BDAY + "T22:00:00.000Z"
+      list.push(dateStr)
+    })
+    this.data =  list.map(d => new Date(d))
+  },
+
+
+  data() {
     return {
-      data: data.map(d => new Date(d)),
+      data: [],
+      startDate: "",
+      endDate: "",
       prettify: function(ts) {
         return new Date(ts).toLocaleDateString("en", {
           year: "numeric",
@@ -42,6 +62,18 @@ name: "Timeline",
         });
       }
     };
+  },
+
+  methods: {
+
+    sliderChanged(values){
+      this.startDate= new Date(values.from)
+      this.endDate = new Date(values.to)
+      let startStr =this.startDate.getFullYear() + "-" + this.startDate.getMonth() + "-" + this.startDate.getDay()
+      let endStr =this.endDate.getFullYear() + "-" + this.endDate.getMonth() + 1 + "-" + this.endDate.getDay()
+
+      bus.$emit('change',startStr, endStr)
+    }
   }
 }
 

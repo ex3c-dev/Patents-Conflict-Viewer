@@ -63,6 +63,7 @@
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
       <Timeline class="timeline"></Timeline>
+      <VectorMap class="vectorMap"></VectorMap>
     </vl-map>
   </div>
 </template>
@@ -72,6 +73,7 @@ import Vue from 'vue'
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
 import Timeline from "./Timeline";
+import VectorMap from "./VectorMap";
 import {findPointOnSurface} from "vuelayers/lib/ol-ext"; // needs css-loader
 
 Vue.use(VueLayers)
@@ -79,8 +81,8 @@ Vue.use(VueLayers)
 export default {
   name: "LayerMap",
   components: {
-    Timeline
-
+    Timeline,
+    VectorMap
   },
   data () {
     return {
@@ -107,6 +109,10 @@ export default {
   position: absolute;
   margin: 33% ;
   margin-left: 30%;
+}
+
+.vectorMap{
+  position: absolute;
 }
 
 .feature-popup {
