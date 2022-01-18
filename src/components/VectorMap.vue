@@ -21,6 +21,7 @@ import VueLayers from 'vuelayers';
 import FillStyle from 'vuelayers';
 import world from 'world-atlas/countries-110m.json';
 import {bus} from "../main";
+import {uuid} from "vue-uuid";
 
 const topojson = require("topojson-client");
 
@@ -37,6 +38,7 @@ export default {
       rotation: 0,
       features: [],
       conflictList: [],
+      activeLayers: [],
       loading: false,
     }
   },
@@ -49,6 +51,7 @@ export default {
 
     genCountryList() {
       let list = [];
+      this.activeLayers = [];
       this.conflictList.forEach((conflict) => {
         let conflictCountry = conflict.COUNTRY;
         if (!list.includes(conflictCountry)) {
@@ -71,17 +74,37 @@ export default {
 
     colorCountry(numbEvents) {
       if(numbEvents > 400) {
+        this.addLayer({"ID": uuid.v1(), "Events": 400, "Color": "rgba(165,15,21,0.8)", "Text": "OVER 400 EVENTS"});
         return "rgba(165,15,21,0.8)";
       } else if(numbEvents > 300) {
+        this.addLayer({"ID": uuid.v1(), "Events": 300, "Color": "rgba(222,45,38,0.8)", "Text": "FROM 301 TO 400 EVENTS"});
         return "rgba(222,45,38,0.8)";
       } else if(numbEvents > 200) {
+        this.addLayer({"ID": uuid.v1(), "Events": 200, "Color": "rgba(251,106,74,0.9)", "Text": "FROM 201 TO 300 EVENTS"});
         return "rgba(251,106,74,0.9)";
       } else if(numbEvents > 100) {
+        this.addLayer({"ID": uuid.v1(), "Events": 100, "Color": "rgba(252,146,114,0.8)", "Text": "FROM 101 TO 200 EVENTS"});
         return "rgba(252,146,114,0.8)";
       } else if(numbEvents > 50) {
+        this.addLayer({"ID": uuid.v1(), "Events": 50, "Color": "rgba(252,187,161,0.8)", "Text": "FROM 51 TO 100 EVENTS"});
         return "rgba(252,187,161,0.8)";
       } else if(numbEvents > 0) {
+        this.addLayer({"ID": uuid.v1(), "Events": 0, "Color": "rgba(254,229,217,0.9)", "Text": "FROM 1 TO 50 EVENTS"});
         return "rgba(254,229,217,0.9)";
+      }
+    },
+
+    addLayer(layer){
+      var contains = false;
+      this.activeLayers.forEach((lay) => {
+        if(lay.Events == layer.Events){
+          contains = true
+        }
+      })
+
+      if(!contains){
+        this.activeLayers.push(layer);
+        //console.log(this.activeLayers);
       }
     },
 
@@ -128,6 +151,10 @@ export default {
   },
 
   watch: {
+    activeLayers: async function () {
+      bus.$emit("NumberOfEvents", this.activeLayers);
+      console.log(this.activeLayers);
+    },
     conflictList: async function () {
       this.loading = true
       this.loadFeatures().then(features => {

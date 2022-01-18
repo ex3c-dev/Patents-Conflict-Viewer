@@ -2,6 +2,24 @@
   <div>
     <vl-map :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
             data-projection="EPSG:4326" style="height: 100%; width: 100%">
+      <!-- Map Legend -->
+      <div class="map-legend">
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-header class="map-legend-header">
+              Map Legend
+            </v-expansion-panel-header>
+            <v-expansion-panel-content class="map-legend-content overflow-auto">
+                <LegendPointLayer/>
+                <LegendCountryLayer/>
+                <LegendClusterLayer/>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </div>
+      <!-- Map Legend end -->
+
+
       <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation">
         <vl-interaction-select v-if="drawType == null" :features.sync="selectedFeatures">
           <template>
@@ -74,15 +92,22 @@ import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
 import Timeline from "./Timeline";
 import VectorMap from "./VectorMap";
-import {findPointOnSurface} from "vuelayers/lib/ol-ext"; // needs css-loader
+import LegendCountryLayer from "@/components/LegendCountryLayer";
+import {findPointOnSurface} from "vuelayers/lib/ol-ext";
+import LegendPointLayer from "@/components/LegendPointLayer";
+import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
+
 
 Vue.use(VueLayers)
 
 export default {
   name: "LayerMap",
   components: {
+    LegendClusterLayer,
+    LegendPointLayer,
     Timeline,
-    VectorMap
+    VectorMap,
+    LegendCountryLayer
   },
   data () {
     return {
@@ -107,7 +132,7 @@ export default {
 <style lang="scss" scoped>
 .timeline{
   position: absolute;
-  margin: 33% ;
+  bottom: 0;
   margin-left: 30%;
 }
 
@@ -146,5 +171,15 @@ export default {
     left: 48px;
     margin-left: -11px;
   }
+}
+.map-legend{
+  position: absolute;
+  right: 0;
+  width: 30%;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+.map-legend-content{
+  max-height: 500px;
 }
 </style>

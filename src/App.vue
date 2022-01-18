@@ -11,7 +11,7 @@
     <v-main>
       <LayerMap class="map-container"></LayerMap>
       <FilterBar class="filter-container"></FilterBar>
-      <Legend class="legend"></Legend>
+      <!-- <Legend class="legend"></Legend> -->
     </v-main>
 
     <v-footer padless dark>
@@ -25,13 +25,13 @@
 <script>
 import LayerMap from "./components/LayerMap";
 import FilterBar from "./components/FilterBar";
-import Legend from "./components/Legend";
+//import Legend from "./components/Legend";
 
 export default {
   name: 'App',
 
   components: {
-    Legend,
+    //Legend,
     FilterBar,
     LayerMap,
   },
@@ -55,7 +55,7 @@ export default {
 .map-container{
   position: relative;
   display: inline-block;
-  height: 65%;
+  height: 100%;
   min-height: 50%;
   width: 80%;
   float: left;
