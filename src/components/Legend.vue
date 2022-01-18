@@ -57,12 +57,14 @@ export default {
       { text: 'Strategic developments', icon: 'mdi-checkbox-blank-circle', color: '#334f60' },
       { text: 'Multiple event types', icon: 'mdi-checkbox-blank-circle', color: '#7c7c7c' },
     ],
+    // color scheme country layer ['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#de2d26','#a50f15']
     countryLayer: [
-      { text: 'from 1 to 413 events', icon: 'mdi-square', color: '#cd6a49' },
-      { text: 'from 414 to 1706 events', icon: 'mdi-square', color: '#a76149' },
-      { text: 'from 1707 to 4397 events', icon: 'mdi-square', color: '#945b49' },
-      { text: 'from 4398 to 7664 events', icon: 'mdi-square', color: '#825749' },
-      { text: 'from 7665 to 9969 events', icon: 'mdi-square', color: '#6f5248' },
+      { text: 'from 1 to 50 events', icon: 'mdi-square', color: '#fee5d9' },
+      { text: 'from 51 to 100 events', icon: 'mdi-square', color: '#fcbba1' },
+      { text: 'from 101 to 200 events', icon: 'mdi-square', color: '#fc9272' },
+      { text: 'from 201 to 300 events', icon: 'mdi-square', color: '#fb6a4a' },
+      { text: 'from 301 to 400 events', icon: 'mdi-square', color: '#de2d26' },
+      { text: 'over 400 events', icon: 'mdi-square', color: '#a50f15' },
     ],
     clusterLayer: [
       { text: 'F41 - Weapons', icon: 'mdi-hexagon', color: '#9ff1bf' },
