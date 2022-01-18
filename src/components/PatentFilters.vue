@@ -3,6 +3,7 @@
 
 
     <v-autocomplete
+        class="filter"
         v-model="selCountries"
         :items="countryList"
         label="Countries"
@@ -79,5 +80,7 @@ export default {
 </script>
 
 <style scoped>
-
+.filter{
+  transform: translateY(20px);
+}
 </style>

@@ -1,6 +1,7 @@
 <template><div class="target-type-input">
 
   <v-autocomplete
+      class="filter"
       v-model="TargetTypes"
       :items="TargetList"
       label="Choose as many types as you want"
@@ -51,5 +52,9 @@ export default {
 </script>
 
 <style scoped>
+
+.filter{
+  transform: translateY(20px);
+}
 
 </style>
