@@ -75,7 +75,7 @@ export default {
     conflictData.forEach((event) => {this.instigatorList.push(event.ACTOR1)})
     conflictData.forEach((event) => {this.targetList.push(event.TARGET1)})
 
-    //Returns all conflict data, as yet unfiltered, for the initial visualization. TODO: when patent server goes up, do the same for patent data
+    //Returns all conflict data, as yet unfiltered, for the initial visualization.
     this.filterEvents()
   },
 
@@ -169,7 +169,6 @@ export default {
       //Create Request
       //TODO: when Server is up, test date range
       this.request = this.baseUrl + this.geoc+ this.regionSearchStr + this.typeSearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
-      console.log(this.request)
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
