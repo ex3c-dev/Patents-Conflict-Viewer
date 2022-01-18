@@ -59,6 +59,7 @@ export default {
       this.dateTo = to
       this.dateFrom = from
       this.filterEvents()
+      this.filterPatents()
     })
     bus.$on('selected-types', (selSections) => {
       this.selSections = selSections
@@ -227,7 +228,6 @@ export default {
     },
 
     sendRequest: async function(req) {
-      console.log("FETCHING")
       return axios.get(req)
           .then(response => {
                 console.log("Fetched " + response.data.length + " results")
