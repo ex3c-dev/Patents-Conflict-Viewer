@@ -34,7 +34,7 @@ _Interactions:_
 - “On-Map-Clicking”
 - Buttons / Clusters
 
-**Curernt Feature List:**
+**Current Feature List:**
 - Zoom and moving functionality
 - Patent and conflict data visualization
 - Patent and conflict data filtering
@@ -42,9 +42,29 @@ _Interactions:_
 - Timeline and histogram
 - Dynamic legend
 
-**Results:**
 
-**Abnormalities:**
+**Known Issues:**
+- Response paging not yet implemented
+- Clusters not yet implemented 
+
+**Planned features**
+- Implement response paging
+- Implement patent cluster visualization
+- Finish popup on map interaction with informations about patents, events and countries.
+- Spread event points over the country
+
+**Nice-to-have features**
+- Collapsible filter bar
+- Popup: Dynamic image loading for locations
+- Divide patent type into subcategories
+- Make country names more visible in colored countries
+
+
+
+
+
+
+**Results:**
 
 ## Project setup
 
