@@ -42,10 +42,8 @@ export default {
     InstigatorTypes: async function () {
 
       bus.$emit('selected-instigagors', this.InstigatorTypes)
-      //console.log("Selected:" + this.InstigatorTypes)
     }
   },
-
 }
 </script>
 

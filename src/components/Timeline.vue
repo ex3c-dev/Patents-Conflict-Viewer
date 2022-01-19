@@ -69,8 +69,11 @@ name: "Timeline",
     sliderChanged(values){
       this.startDate= new Date(values.from)
       this.endDate = new Date(values.to)
-      let startStr =this.startDate.getFullYear() + "-" + this.startDate.getMonth() + "-" + this.startDate.getDay()
-      let endStr =this.endDate.getFullYear() + "-" + this.endDate.getMonth() + 1 + "-" + this.endDate.getDay()
+
+      let startMonth = this.startDate.getMonth() + 1
+      let endMonth = this.endDate.getMonth() + 1
+      let startStr = this.startDate.getFullYear() + "-" + startMonth + "-" + this.startDate.getDate()
+      let endStr = this.endDate.getFullYear() + "-" + endMonth  + "-" + this.endDate.getDate()
 
       bus.$emit('change',startStr, endStr)
     }
