@@ -33,6 +33,7 @@
                 :auto-pan="true"
                 :auto-pan-animation="{duration: 300}">
               <template>
+                <!-- Events - Kriege, Terrorismus etc -->
                 <v-card v-if="feature.properties.type == 'event'">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
                   <v-card-title>Event: {{feature.properties.event.COUNTRY}} - {{feature.properties.event.CITY}}</v-card-title>
@@ -52,6 +53,13 @@
                     </div>
                   </v-expand-transition>
                 </v-card>
+                <!-- Patents -->
+                <v-card v-if="feature.properties.type == 'patent'">
+                  <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
+                  <v-card-title>Patent: {{feature.properties.data.lat}} - {{feature.properties.data.lng}}</v-card-title>
+                  <v-card-subtitle>{{feature.properties.data}}</v-card-subtitle>
+                </v-card>
+
                 <!--
                 <v-card class="mx-auto" max-width="344">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
@@ -91,12 +99,16 @@
           </vl-feature>
         </template>
       </vl-geoloc>
+
+      <ClusterLayer></ClusterLayer>
+      <!--
       <vl-feature
           v-for="cluster in clusters"
           :key="cluster.id"
           :id="cluster.id">
         <vl-geom-circle :coordinates="cluster.coordinates" :radius="cluster.radius" ></vl-geom-circle>
       </vl-feature>
+      -->
       <vl-feature
           v-for="event in events"
           :key="event.EVENTID"
@@ -127,12 +139,14 @@ import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
 import {bus} from "@/main";
+import ClusterLayer from "@/components/ClusterLayer";
 
 Vue.use(VueLayers)
 
 export default {
   name: "LayerMap",
   components: {
+    ClusterLayer,
     LegendClusterLayer,
     LegendPointLayer,
     Timeline,
