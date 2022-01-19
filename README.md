@@ -56,6 +56,8 @@ _Interactions:_
 - Implement patent cluster visualization
 - Finish popup on map interaction with informations about patents, events and countries.
 - Spread event points over the country
+- Better differentiation between individual patents and events
+
 
 **Nice-to-have features**
 - Collapsible filter bar
