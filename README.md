@@ -23,7 +23,7 @@
 - Do conflicts inhibit infrastructure development, which in turn inhibit patent development in certain ipc classes that rely the existence of a more complex infrastructure?
 - Are there any potential relationships between countries that initiate conflict and weapon related patents?
 
-**Visualiziation:**
+**Planned Visualiziations:**
 - Map with  juxtaposition of data and tools for filtering/manipulation
 
 _Interactions:_
@@ -33,6 +33,14 @@ _Interactions:_
 - Timeline
 - “On-Map-Clicking”
 - Buttons / Clusters
+
+**Curernt Feature List:**
+- Zoom and moving functionality
+- Patent and conflict data visualization
+- Patent and conflict data filtering
+- Dynamic map interactions
+- Timeline and histogram
+- Dynamic legend
 
 **Results:**
 
