@@ -1,6 +1,7 @@
 <template><div class="instigator-type-input">
 
   <v-autocomplete
+      class="filter"
       v-model="InstigatorTypes"
       :items="InstigatorList"
       label="Choose as many types as you want"
@@ -47,5 +48,9 @@ export default {
 </script>
 
 <style scoped>
+
+.filter{
+  transform: translateY(20px);
+}
 
 </style>

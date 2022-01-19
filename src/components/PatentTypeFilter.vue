@@ -1,6 +1,7 @@
 <template><div class="patent-type-input">
 
   <v-autocomplete
+      class="filter"
       v-model="selSections"
       :items="sectionList"
       label="Type as many types as you want"
@@ -44,5 +45,9 @@ export default {
 </script>
 
 <style scoped>
+
+.filter{
+  transform: translateY(20px);
+}
 
 </style>
