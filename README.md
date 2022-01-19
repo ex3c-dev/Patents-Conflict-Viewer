@@ -61,6 +61,9 @@ _Interactions:_
 - Popup: Dynamic image loading for locations
 - Divide patent type into subcategories
 - Make country names more visible in colored countries
+- Filter Histogram
+
+
 
 
 
