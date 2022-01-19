@@ -1,6 +1,6 @@
 # infoviz - Group 16
 
-**Website link**
+**Website link: **
 http://infoviz-team16.ex3c.de
 
 **Introduction Team:**
