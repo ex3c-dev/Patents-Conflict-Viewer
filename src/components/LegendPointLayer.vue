@@ -22,6 +22,7 @@
 <script>
 //import {bus} from "@/main";
 import {uuid} from 'vue-uuid'
+import {bus} from "@/main";
 export default {
   name: "LegendPointLayer",
   data() {
@@ -38,13 +39,10 @@ export default {
     }
   },
   created() {
-    /*
-    bus.$on('NumberOfEvents', (data) => {
+    bus.$on('filtered-USD', (data) => {
       console.log(data);
-      this.pointLayer = data.slice();
-      this.pointLayer.sort(function (a, b) {return a.Events - b.Events})
+      //this.conflictList = data;
     });
-    */
   },
   methods: {
     randomColor(){
