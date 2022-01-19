@@ -49,6 +49,7 @@ _Interactions:_
 **Known Issues:**
 - Response paging not yet implemented
 - Clusters not yet implemented 
+- Issue when filtering while a popup is open
 
 **Planned features**
 - Implement response paging
