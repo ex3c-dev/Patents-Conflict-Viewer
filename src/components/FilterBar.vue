@@ -184,6 +184,25 @@ export default {
     },
 
     filterEvents() {
+      //map function to rename countries to match conflict dataset
+      const mapConflictCountry = new Map([
+        ["Côte d'Ivoire", "Cote d'Ivoire"],
+        ["United Arab Emirates (the)", "United Arab Emirates"],
+        ["Congo (the)", "Congo"],
+        ["Venezuela (Bolivarian Republic of)", "Venezuela"],
+        ["Viet Nam", "Vietnam"],
+        ["Syrian Arab Republic", "Syria"],
+        ["Tanzania, United Republic of", "Tanzania"],
+        ["Sudan (the)", "Sudan"],
+        ["Congo (the Democratic Republic of the)", "Congo, DRC"],
+        ["Bolivia (Plurinational State of)", "Bolivia"],
+        ["Philippines (the)", "Philippines"],
+        ["Niger (the)", "Niger"],
+        ["Dominican Republic (the)", "Dominican Republic"],
+        ["Korea (the Republic of)", "South Korea"],
+        ["Iran (Islamic Republic of)", "Iran"],
+        ["Lao People's Democratic Republic (the)", "Laos"]
+      ]);
 
       //Prepare filter values
       let str1, str2, str3
@@ -196,6 +215,9 @@ export default {
       else str2 = this.selInstigators
       if (this.selTargets.length < 1) str3 = this.targetList
       else str3 = this.selTargets
+
+      //rename country list to fit conflict dataset
+      str1 = str1.map(countryName => (mapConflictCountry.get(countryName) || countryName));
 
       //filter USD Database
       let data = conflictData,
