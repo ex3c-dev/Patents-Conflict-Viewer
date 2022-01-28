@@ -41,6 +41,7 @@ import typelist from "@/types.json";
 import ConflictTypeFilter from "@/components/ConflictInstigatorFilter";
 import ConflictTargetFilter from "@/components/ConflictTargetFilter";
 import conflictData from "../USD_data.json";
+
 export default {
   name: "FilterBar",
   components: {
@@ -100,6 +101,8 @@ export default {
     filteredEvents:[],
     dateFrom: "1960-1-1",
     dateTo: "2016-12-31",
+    joinedPatents: new Map,
+    idStr: "",
     items: [
       ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
@@ -155,6 +158,7 @@ export default {
       this.countryFilterIDs = []
       this.typeSearchStr = ""
       this.regionSearchStr = ""
+      this.idStr = ""
 
       if (this.selCountries.length !== 0) {
         this.regionSearchStr = "name_0=in.(" + this.selCountries[0]
@@ -175,7 +179,32 @@ export default {
       this.sendRequest(this.request).then((response) => {
         if (response !== undefined) {
 
-          response.forEach((id) => {this.countryFilterIDs.push(id.appln_id)})
+          response.forEach((id, index) => {
+            this.countryFilterIDs.push(id.appln_id)
+            this.joinedPatents.set(id.appln_id, id)
+            this.joinedPatents.get(id.appln_id).patentType = []
+            //Create second request string
+            if (index < response.length - 1) this.idStr += id.appln_id + ","; else this.idStr += id.appln_id
+
+          })
+          this.request2 = this.baseUrl + this.tls + "appln_id=in.(" + this.idStr + ")" + "&&limit=2000"
+
+          this.sendRequest(this.request2).then((response2) => {
+            if (response2 !== undefined) {
+
+              // maps patent ID to json object with all necessary information from both tables
+              response2.forEach((type) => {
+                if (this.joinedPatents.has(type.appln_id)) {
+                  let tmp = this.joinedPatents.get(type.appln_id)
+                  tmp.patentType.push(type.ipc_class_symbol)
+                  this.joinedPatents.set(type.appln_id, tmp.valueOf())
+                }
+              })
+
+              //emits map with patent types
+              bus.$emit('filtered-map', this.joinedPatents)
+            }
+          })
 
           //emit filtered Patents
           bus.$emit('filtered-patents', response)
@@ -231,6 +260,7 @@ export default {
       });
 
       console.log("USD has " + filteredUSD.length + " matches");
+
 
       //Emit Filtered USD database entries
       bus.$emit('filtered-USD', filteredUSD)
