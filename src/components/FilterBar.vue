@@ -212,7 +212,7 @@ export default {
       })
     },
 
-    filterEvents() {
+    filterEvents: async function() {
       //map function to rename countries to match conflict dataset
       const mapConflictCountry = new Map([
         ["Côte d'Ivoire", "Cote d'Ivoire"],
@@ -281,7 +281,7 @@ export default {
 
     sendRequest: async function(req) {
       return axios.get(req)
-          .then(response => {
+          .then( response => {
                 console.log("Fetched " + response.data.length + " results")
                 return response.data
               }
