@@ -20,7 +20,7 @@
       <!-- Map Legend end -->
 
 
-      <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation">
+      <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation" :min-zoom="3">
         <vl-interaction-select v-if="drawType == null" :features.sync="selectedFeatures">
           <template>
 
@@ -60,6 +60,7 @@
                   <v-card-subtitle>{{feature.properties.data}}</v-card-subtitle>
                 </v-card>
 
+
                 <!--
                 <v-card class="mx-auto" max-width="344">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
@@ -89,6 +90,7 @@
         </vl-interaction-select>
       </vl-view>
 
+
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
@@ -100,7 +102,7 @@
         </template>
       </vl-geoloc>
 
-      <ClusterLayer></ClusterLayer>
+
       <!--
       <vl-feature
           v-for="cluster in clusters"
@@ -108,7 +110,17 @@
           :id="cluster.id">
         <vl-geom-circle :coordinates="cluster.coordinates" :radius="cluster.radius" ></vl-geom-circle>
       </vl-feature>
+
+
+
       -->
+
+      <ClusterLayer class="clusters"></ClusterLayer>
+      <Charts></Charts>
+
+
+
+
       <vl-feature
           v-for="event in events"
           :key="event.EVENTID"
@@ -119,9 +131,11 @@
           </vl-geom-point>
       </vl-feature>
 
+
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
+
       <Timeline class="timeline"></Timeline>
       <VectorMap class="vectorMap"></VectorMap>
     </vl-map>
@@ -139,13 +153,14 @@ import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
 import {bus} from "@/main";
+import Charts from "@/components/Charts";
 import ClusterLayer from "@/components/ClusterLayer";
-
 Vue.use(VueLayers)
 
 export default {
   name: "LayerMap",
   components: {
+    Charts,
     ClusterLayer,
     LegendClusterLayer,
     LegendPointLayer,
@@ -185,6 +200,10 @@ export default {
   position: absolute;
   bottom: 0;
   margin-left: 30%;
+}
+
+.clusters{
+  position: absolute;
 }
 
 .vectorMap{
@@ -227,8 +246,8 @@ export default {
   position: absolute;
   right: 0;
   width: 30%;
-  margin-top: 5px;
-  margin-right: 5px;
+  margin-top: 15px;
+  margin-right: 8px;
 }
 .map-legend-content{
   max-height: 500px;
