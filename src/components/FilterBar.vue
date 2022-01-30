@@ -205,9 +205,9 @@ export default {
                   }
                 })
                 /*
-                                for (let [key, value] of this.joinedPatents) {
-                                  console.log(key, value);
-                                }
+                 for (let [key, value] of this.joinedPatents) {
+                   console.log(key, value);
+                  }
                  */
                 //TODO ich bin momentan zu doof um die lettze schleife zu erkennen, halp.
                 if (i + chunk > j) {
@@ -253,12 +253,10 @@ export default {
             }
           })
           this.extracted();
-
         }
       } else {
         this.extracted()
       }
-
     },
 
     filterEvents: async function() {
@@ -347,8 +345,7 @@ export default {
 
       return axios.get(test, config)
           .then( response => {
-
-
+            
                 console.log("Fetched " + response.data.length + " results")
                 console.log("content-range: " + response.headers["content-range"])
 
