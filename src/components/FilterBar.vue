@@ -157,7 +157,7 @@ export default {
 
   methods: {
 
-    extracted: function () {
+    sendPatentFilterRequest: function () {
       //Create Request
       //TODO: when Server is up, test date range
       this.request = this.baseUrl + this.geoc + this.regionSearchStr + this.typeSearchStr + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
@@ -192,6 +192,7 @@ export default {
             //console.log(this.request2)
 
             //send request with max. 5000 ids
+            //TODO this happens multiple times, see
             this.sendRequest(this.request2).then(async (response2) => {
               if (response2 !== undefined) {
                 console.log("MAP REQUEST")
@@ -212,6 +213,7 @@ export default {
                 //TODO ich bin momentan zu doof um die lettze schleife zu erkennen, halp.
                 if (i + chunk > j) {
                   //console.log("DONE")
+
                   bus.$emit('filtered-map', this.joinedPatents)
                 }
               }
@@ -252,10 +254,10 @@ export default {
               this.typeSearchStr = this.formatIDfilter(this.temporary)
             }
           })
-          this.extracted();
+          this.sendPatentFilterRequest();
         }
       } else {
-        this.extracted()
+        this.sendPatentFilterRequest()
       }
     },
 
@@ -345,7 +347,7 @@ export default {
 
       return axios.get(test, config)
           .then( response => {
-            
+
                 console.log("Fetched " + response.data.length + " results")
                 console.log("content-range: " + response.headers["content-range"])
 
@@ -368,6 +370,7 @@ export default {
                   //console.log("RES: \n \n" + JSON.stringify(this.res.length))
 
                   //TODO change curEnd to max, for more diverse results
+                  //TODO TOBI hier hast du partielle ergebnisse unter  response.data
                   return this.sendRequest(req, curSt, "", false)
                 }
 
