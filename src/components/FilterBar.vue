@@ -135,10 +135,6 @@ export default {
       //Note: Some patents are however registered in multiple countries. Results for unfiltered Countries may therefore appear.
       if(this.selCountries.length > 0) this.typeSearchStr += this.formatIDfilter(this.countryFilterIDs)
 
-
-
-
-
       //Create Request
       //TODO either page or remove hardcoded limit.
       this.request = this.baseUrl + this.tls + this.typeSearchStr
@@ -161,27 +157,10 @@ export default {
 
   methods: {
 
-    filterPatents: async function() {
-      //Prepare request string
-      this.countryFilterIDs = []
-      this.typeSearchStr = ""
-      this.regionSearchStr = ""
-      this.idStr = ""
-
-      if (this.selCountries.length !== 0) {
-        this.regionSearchStr = "name_0=in.(" + this.selCountries[0]
-        this.selCountries.forEach((country) => {if (this.selCountries[0]!== country) this.regionSearchStr += ("," + country)})
-        this.regionSearchStr += (")")
-      }
-
-      //Filter IDs that were selected in section filter
-      if(this.selSections.length > 0) {
-        this.typeSearchStr = this.formatIDfilter(this.sectionFilterIDs)
-      }
-
+    extracted: function () {
       //Create Request
       //TODO: when Server is up, test date range
-      this.request = this.baseUrl + this.geoc+ this.regionSearchStr + this.typeSearchStr  + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+      this.request = this.baseUrl + this.geoc + this.regionSearchStr + this.typeSearchStr + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then(async (response) => {
@@ -205,7 +184,7 @@ export default {
 
               //Create second request string
               if (index < temporary.length - 1) this.idStr += tmp.appln_id + ","
-              else if (temporary.length === 1) this.idStr =  tmp.appln_id
+              else if (temporary.length === 1) this.idStr = tmp.appln_id
               else this.idStr += tmp.appln_id
             })
 
@@ -225,13 +204,13 @@ export default {
                     this.joinedPatents.set(type.appln_id, tmp.valueOf())
                   }
                 })
-/*
-                for (let [key, value] of this.joinedPatents) {
-                  console.log(key, value);
-                }
- */
+                /*
+                                for (let [key, value] of this.joinedPatents) {
+                                  console.log(key, value);
+                                }
+                 */
                 //TODO ich bin momentan zu doof um die lettze schleife zu erkennen, halp.
-                if(i + chunk > j) {
+                if (i + chunk > j) {
                   //console.log("DONE")
                   bus.$emit('filtered-map', this.joinedPatents)
                 }
@@ -241,9 +220,45 @@ export default {
           }
 
           //emit filtered Patents
+          //TODO this should happen later i guess
           bus.$emit('filtered-patents', response)
         }
       })
+    },
+
+    filterPatents: async function() {
+      //Prepare request string
+      this.countryFilterIDs = []
+      this.typeSearchStr = ""
+      this.regionSearchStr = ""
+      this.idStr = ""
+
+      if (this.selCountries.length !== 0) {
+        this.regionSearchStr = "name_0=in.(" + this.selCountries[0]
+        this.selCountries.forEach((country) => {if (this.selCountries[0]!== country) this.regionSearchStr += ("," + country)})
+        this.regionSearchStr += (")")
+      }
+
+      if(this.selSections.length > 0) {
+        var i, j, temporary, chunk = 5000;
+        for (i = 0, j = this.selSections.length; i < j; i += chunk) {
+
+          this.idStr = ""
+          temporary = this.selSections.slice(i, i + chunk);
+
+          temporary.forEach(() => {
+            //Filter IDs that were selected in section filter
+            if(this.selSections.length > 0) {
+              this.typeSearchStr = this.formatIDfilter(this.temporary)
+            }
+          })
+          this.extracted();
+
+        }
+      } else {
+        this.extracted()
+      }
+
     },
 
     filterEvents: async function() {
