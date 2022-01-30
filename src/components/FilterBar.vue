@@ -79,6 +79,7 @@ export default {
 
     //Returns all conflict data, as yet unfiltered, for the initial visualization.
     this.filterEvents()
+    this.filterPatents()
   },
 
   data: () => ({
@@ -103,6 +104,8 @@ export default {
     dateTo: "2016-12-31",
     joinedPatents: new Map,
     idStr: "",
+    first: true,
+    res: [],
     items: [
       ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
@@ -132,13 +135,18 @@ export default {
       //Note: Some patents are however registered in multiple countries. Results for unfiltered Countries may therefore appear.
       if(this.selCountries.length > 0) this.typeSearchStr += this.formatIDfilter(this.countryFilterIDs)
 
+
+
+
+
       //Create Request
       //TODO either page or remove hardcoded limit.
-      this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000" // + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+      this.request = this.baseUrl + this.tls + this.typeSearchStr
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
         if (response !== undefined) {
+          console.log("PATENT TYPE FILTER REQUEST")
 
           response.forEach((type) => {
             this.sectionFilterIDs.push(type.appln_id)
@@ -173,38 +181,64 @@ export default {
 
       //Create Request
       //TODO: when Server is up, test date range
-      this.request = this.baseUrl + this.geoc+ this.regionSearchStr + this.typeSearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+      this.request = this.baseUrl + this.geoc+ this.regionSearchStr + this.typeSearchStr  + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
 
       //Send request and save filtered IDS for further filtering
-      this.sendRequest(this.request).then((response) => {
+      this.sendRequest(this.request).then(async (response) => {
         if (response !== undefined) {
+          console.log("PATENT  LOCATION FILTER REQUEST")
 
-          response.forEach((id, index) => {
-            this.countryFilterIDs.push(id.appln_id)
-            this.joinedPatents.set(id.appln_id, id)
-            this.joinedPatents.get(id.appln_id).patentType = []
-            //Create second request string
-            if (index < response.length - 1) this.idStr += id.appln_id + ","; else this.idStr += id.appln_id
+          //console.log("Received response: " + response.length)
 
-          })
-          this.request2 = this.baseUrl + this.tls + "appln_id=in.(" + this.idStr + ")" + "&&limit=2000"
+          //Postgrest API can't handle all IDs in query at once
+          var i, j, temporary, chunk = 5000;
+          for (i = 0, j = response.length; i < j; i += chunk) {
 
-          this.sendRequest(this.request2).then((response2) => {
-            if (response2 !== undefined) {
+            this.idStr = ""
+            temporary = response.slice(i, i + chunk);
 
-              // maps patent ID to json object with all necessary information from both tables
-              response2.forEach((type) => {
-                if (this.joinedPatents.has(type.appln_id)) {
-                  let tmp = this.joinedPatents.get(type.appln_id)
-                  tmp.patentType.push(type.ipc_class_symbol)
-                  this.joinedPatents.set(type.appln_id, tmp.valueOf())
+            temporary.forEach((tmp, index) => {
+
+              this.countryFilterIDs.push(tmp.appln_id)
+              this.joinedPatents.set(tmp.appln_id, tmp)
+              this.joinedPatents.get(tmp.appln_id).patentType = []
+
+              //Create second request string
+              if (index < temporary.length - 1) this.idStr += tmp.appln_id + ","
+              else if (temporary.length === 1) this.idStr =  tmp.appln_id
+              else this.idStr += tmp.appln_id
+            })
+
+            this.request2 = this.baseUrl + this.tls + "appln_id=in.(" + this.idStr + ")"
+            //console.log(this.request2)
+
+            //send request with max. 5000 ids
+            this.sendRequest(this.request2).then(async (response2) => {
+              if (response2 !== undefined) {
+                console.log("MAP REQUEST")
+
+                // maps patent ID to json object with all necessary information from both tables
+                response2.forEach((type) => {
+                  if (this.joinedPatents.has(type.appln_id)) {
+                    let tmp = this.joinedPatents.get(type.appln_id)
+                    tmp.patentType.push(type.ipc_class_symbol)
+                    this.joinedPatents.set(type.appln_id, tmp.valueOf())
+                  }
+                })
+/*
+                for (let [key, value] of this.joinedPatents) {
+                  console.log(key, value);
                 }
-              })
-
-              //emits map with patent types
-              bus.$emit('filtered-map', this.joinedPatents)
-            }
-          })
+ */
+                //TODO ich bin momentan zu doof um die lettze schleife zu erkennen, halp.
+                if(i + chunk > j) {
+                  //console.log("DONE")
+                  bus.$emit('filtered-map', this.joinedPatents)
+                }
+              }
+            })
+            //bus.$emit('filtered-map', this.joinedPatents)
+          }
 
           //emit filtered Patents
           bus.$emit('filtered-patents', response)
@@ -279,11 +313,53 @@ export default {
       return str
     },
 
-    sendRequest: async function(req) {
-      return axios.get(req)
+    sendRequest: async function(req, start=0, end, first = true) {
+
+      let offset = 2000
+      let limit = 8000
+
+      let config = {
+        headers: {
+          //"range-unit": "items",
+          //"range": start + "-" + end,
+          "prefer": "count=planned",
+          //"Access-Control-Allow-Origin" : "*"
+
+    }
+      }
+      //TODO when i change limit request is not satisfiable??
+      let test = req + "&&limit=2000&&offset="+start
+
+      return axios.get(test, config)
           .then( response => {
+
+
                 console.log("Fetched " + response.data.length + " results")
-                return response.data
+                console.log("content-range: " + response.headers["content-range"])
+
+                let max = parseInt (response.headers["content-range"].split("/")[1])
+                let curSt = parseInt(response.headers["content-range"].split("/")[0].split("-")[0])
+                let curEnd = parseInt(response.headers["content-range"].split("/")[0].split("-")[1])
+
+                if (first) this.res = response.data
+                else this.res = [...this.res , ... response.data]
+
+                curSt += offset
+                curEnd += offset
+
+                //Pagination
+                //The limit is necessary since either the server can't keep up or the configuration isn't ideal.
+                //Otherwhise, the min operation can be removed and the offset enlarged.
+                if((curEnd - 1)  <=  Math.min(max,limit)) {
+
+                  //console.log("RESPONSE: \n \n " + JSON.stringify(response.data.length))
+                  //console.log("RES: \n \n" + JSON.stringify(this.res.length))
+
+                  //TODO change curEnd to max, for more diverse results
+                  return this.sendRequest(req, curSt, "", false)
+                }
+
+                return this.res
               }
           )
           .catch(error => {
@@ -291,7 +367,55 @@ export default {
             console.error("There was an error!", error)
           })
     },
-  }
+
+
+    sendRequest2: async function(req, start=0, end=5000, first=true) {
+
+      let offset = 10000
+      let limit = 500000
+
+      let config = {
+        headers: {
+          "range-unit": "items",
+          "range": start + "-" + end,
+          "prefer": "count=planned"
+        }
+      }
+
+      return await axios.get(req, config)
+          .then( response => {
+                console.log("Fetched " + response.data.length + " results")
+                console.log("content-range: " + response.headers["content-range"])
+
+                let max = parseInt (response.headers["content-range"].split("/")[1])
+                let curSt = parseInt(response.headers["content-range"].split("/")[0].split("-")[0])
+                let curEnd = parseInt(response.headers["content-range"].split("/")[0].split("-")[1])
+
+                if (first) this.res = response.data
+                else this.res = [...this.res , ... response.data]
+
+                curSt += offset
+                curEnd += offset
+
+                //Pagination
+                //The limit is necessary since either the server can't keep up or the configuration isn't ideal.
+                //Otherwhise, the min operation can be removed and the offset enlarged.
+                if((curEnd - 1)  <=  Math.min(max,limit)) {
+
+                  //console.log("RESPONSE: \n \n " + JSON.stringify(response.data.length))
+                  //console.log("RES: \n \n" + JSON.stringify(this.res.length))
+
+                  this.sendRequest(req, curSt, curEnd, false)
+                }
+                return this.res
+              }
+          )
+          .catch(error => {
+            this.errorMessage = error.message;
+            console.error("There was an error!", error)
+          })
+    },
+  },
 }
 
 </script>
