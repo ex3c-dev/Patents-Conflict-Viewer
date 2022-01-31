@@ -330,7 +330,7 @@ export default {
       return axios.get(reqString, config)
           .then( response => {
 
-                //console.log("Fetched " + response.data.length + " results")
+                console.log("Fetched " + response.data.length + " results")
 
                 let max = parseInt (response.headers["content-range"].split("/")[1])
                 let curSt = parseInt(response.headers["content-range"].split("/")[0].split("-")[0])
