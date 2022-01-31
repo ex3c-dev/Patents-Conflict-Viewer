@@ -77,8 +77,9 @@ export default {
     conflictData.forEach((event) => {this.instigatorList.push(event.ACTOR1)})
     conflictData.forEach((event) => {this.targetList.push(event.TARGET1)})
 
-    //Returns all conflict data, as yet unfiltered, for the initial visualization.
+    //Returns all conflict and patent data, as yet unfiltered, for the initial visualization.
     this.filterEvents()
+    this.filterPatents()
   },
 
   data: () => ({
@@ -103,6 +104,8 @@ export default {
     dateTo: "2016-12-31",
     joinedPatents: new Map,
     idStr: "",
+    first: true,
+    res: [],
     items: [
       ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
@@ -133,13 +136,12 @@ export default {
       if(this.selCountries.length > 0) this.typeSearchStr += this.formatIDfilter(this.countryFilterIDs)
 
       //Create Request
-      //TODO either page or remove hardcoded limit.
-      this.request = this.baseUrl + this.tls + this.typeSearchStr + "&&limit=2000" // + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+      this.request = this.baseUrl + this.tls + this.typeSearchStr
 
       //Send request and save filtered IDS for further filtering
       this.sendRequest(this.request).then((response) => {
-        if (response !== undefined) {
 
+        if (response !== undefined) {
           response.forEach((type) => {
             this.sectionFilterIDs.push(type.appln_id)
           })
@@ -149,9 +151,67 @@ export default {
         }
       })
     },
-},
+  },
 
   methods: {
+
+    sendPatentFilterRequest: function () {
+      //Create Request
+      this.request = this.baseUrl + this.geoc + this.regionSearchStr + this.typeSearchStr + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+
+      //Send request and save filtered IDS for further filtering
+      this.sendRequest(this.request).then(async (response) => {
+
+        if (response !== undefined) {
+
+          //Postgrest API can't handle all IDs in query at once
+          let i, temporary
+          let slice = 5000
+
+          for (i = 0; i < response.length ; i += slice) {
+
+            this.idStr = ""
+            temporary = response.slice(i, i + slice);
+
+            temporary.forEach((tmp, index) => {
+
+              this.countryFilterIDs.push(tmp.appln_id)
+              this.joinedPatents.set(tmp.appln_id, tmp)
+              this.joinedPatents.get(tmp.appln_id).patentType = []
+
+              //Create second request string
+              if (index < temporary.length - 1) this.idStr += tmp.appln_id + ","
+              else if (temporary.length === 1) this.idStr = tmp.appln_id
+              else this.idStr += tmp.appln_id
+            })
+
+            this.request2 = this.baseUrl + this.tls + "appln_id=in.(" + this.idStr + ")"
+
+            //send request with max. 5000 ids
+            this.sendRequest(this.request2).then(async (response2) => {
+
+              if (response2 !== undefined) {
+                // maps patent ID to json object with all necessary information from both tables
+                //TODO some patents have the patent type missing
+                response2.forEach((type) => {
+                  if (this.joinedPatents.has(type.appln_id)) {
+                    let tmp = this.joinedPatents.get(type.appln_id)
+                    tmp.patentType.push(type.ipc_class_symbol)
+                    this.joinedPatents.set(type.appln_id, tmp.valueOf())
+                  }
+                })
+
+                if (i + slice > response.length) {
+                  bus.$emit('filtered-map', this.joinedPatents)
+                }
+              }
+            })
+          }
+          //emit filtered Patents
+          bus.$emit('filtered-patents', response)
+        }
+      })
+    },
 
     filterPatents: async function() {
       //Prepare request string
@@ -166,50 +226,26 @@ export default {
         this.regionSearchStr += (")")
       }
 
-      //Filter IDs that were selected in section filter
+      //break ids into separate chunks for API call
       if(this.selSections.length > 0) {
-        this.typeSearchStr = this.formatIDfilter(this.sectionFilterIDs)
-      }
+        let i, temporary
+        let slice = 5000
+        for (i = 0; i < this.selSections.length; i += slice) {
 
-      //Create Request
-      //TODO: when Server is up, test date range
-      this.request = this.baseUrl + this.geoc+ this.regionSearchStr + this.typeSearchStr + "&&limit=2000" + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
+          this.idStr = ""
+          temporary = this.selSections.slice(i, i + slice);
 
-      //Send request and save filtered IDS for further filtering
-      this.sendRequest(this.request).then((response) => {
-        if (response !== undefined) {
-
-          response.forEach((id, index) => {
-            this.countryFilterIDs.push(id.appln_id)
-            this.joinedPatents.set(id.appln_id, id)
-            this.joinedPatents.get(id.appln_id).patentType = []
-            //Create second request string
-            if (index < response.length - 1) this.idStr += id.appln_id + ","; else this.idStr += id.appln_id
-
-          })
-          this.request2 = this.baseUrl + this.tls + "appln_id=in.(" + this.idStr + ")" + "&&limit=2000"
-
-          this.sendRequest(this.request2).then((response2) => {
-            if (response2 !== undefined) {
-
-              // maps patent ID to json object with all necessary information from both tables
-              response2.forEach((type) => {
-                if (this.joinedPatents.has(type.appln_id)) {
-                  let tmp = this.joinedPatents.get(type.appln_id)
-                  tmp.patentType.push(type.ipc_class_symbol)
-                  this.joinedPatents.set(type.appln_id, tmp.valueOf())
-                }
-              })
-
-              //emits map with patent types
-              bus.$emit('filtered-map', this.joinedPatents)
+          temporary.forEach(() => {
+            //Filter IDs that were selected in section filter
+            if(this.selSections.length > 0) {
+              this.typeSearchStr = this.formatIDfilter(this.temporary)
             }
           })
-
-          //emit filtered Patents
-          bus.$emit('filtered-patents', response)
+          this.sendPatentFilterRequest();
         }
-      })
+      } else {
+        this.sendPatentFilterRequest()
+      }
     },
 
     filterEvents: async function() {
@@ -253,14 +289,11 @@ export default {
           filterBy = { COUNTRY: str1, ACTOR1: str2, TARGET1: str3},
           result = data.filter(object => Object.keys(filterBy).every(key => filterBy[key].some(filter => object[key] === filter)));
 
-      //TODO: solve this in a more elegant way if possible.
-      //TODO: Fix Bug
       let filteredUSD = result.filter(function (event) {
         return event.BYEAR >= fromDate.getFullYear() && !(event.BYEAR > toDate.getFullYear());
       });
 
-      console.log("USD has " + filteredUSD.length + " matches");
-
+      //console.log("USD has " + filteredUSD.length + " matches");
 
       //Emit Filtered USD database entries
       bus.$emit('filtered-USD', filteredUSD)
@@ -279,11 +312,43 @@ export default {
       return str
     },
 
-    sendRequest: async function(req) {
-      return axios.get(req)
+    sendRequest: async function(req, start=0, end, first = true) {
+
+      let offset = 2000
+      let maxLimit = 8000
+
+      let config = {
+        headers: {
+          //"range-unit": "items",
+          //"range": start + "-" + end,
+          "prefer": "count=planned",
+        }
+      }
+
+      let reqString = req + "&&limit=" + offset + "&&offset=" + start
+
+      return axios.get(reqString, config)
           .then( response => {
-                console.log("Fetched " + response.data.length + " results")
-                return response.data
+
+                //console.log("Fetched " + response.data.length + " results")
+
+                let max = parseInt (response.headers["content-range"].split("/")[1])
+                let curSt = parseInt(response.headers["content-range"].split("/")[0].split("-")[0])
+                let curEnd = parseInt(response.headers["content-range"].split("/")[0].split("-")[1])
+
+                if (first) this.res = response.data
+                else this.res = [...this.res , ... response.data]
+
+                curSt += offset
+                curEnd += offset
+
+                //Pagination
+                //The limit is necessary since either the server can't keep up or the configuration isn't ideal.
+                //Otherwhise, the min operation can be removed and the offset enlarged.
+                if((curEnd - 1)  <=  Math.min(max,maxLimit)) {
+                  return this.sendRequest(req, curSt, "", false)
+                }
+                return this.res
               }
           )
           .catch(error => {
@@ -291,7 +356,7 @@ export default {
             console.error("There was an error!", error)
           })
     },
-  }
+  },
 }
 
 </script>
