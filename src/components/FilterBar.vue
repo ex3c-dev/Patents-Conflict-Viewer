@@ -107,7 +107,7 @@ export default {
     first: true,
     res: [],
     items: [
-      ['mdi-briefcase', 'Patent Type', PatentTypeFilter],
+      ['mdi-briefcase', 'Patents', PatentTypeFilter],
       ['mdi-layers', 'Regions', PatentFilters],
       ['mdi-format-list-bulleted-type', 'Conflict Instigator', ConflictTypeFilter],
       ['mdi-human', 'Conflict Target', ConflictTargetFilter],
