@@ -5,7 +5,7 @@
       class="filter"
       v-model="selSections"
       :items="groupList"
-      label="Select patent section"
+      label="Filter by section"
       auto-select-first
       clearable
       deletable-chips
@@ -22,7 +22,7 @@
       class="filter"
       v-model="selSections"
       :items="smallSectionList"
-      label="Select patent class"
+      label="Filter by class"
       auto-select-first
       clearable
       deletable-chips
@@ -39,7 +39,7 @@
       class="filter"
       v-model="selSections"
       :items="sectionList"
-      label="Select patent subgroup"
+      label="Filter by subgroup"
       auto-select-first
       clearable
       deletable-chips
@@ -72,13 +72,20 @@ export default {
       smallSectionList: types_short,
       groupList: typegroup,
       selSections: [],
+      sectionCodes: []
     };
   },
 
   watch: {
     selSections: async function () {
 
-      bus.$emit('selected-types', this.selSections)
+      this.selSections.forEach(el => {
+        let code = el.split(" -")
+        this.sectionCodes.push(code[0])
+        console.log(code[0])
+      })
+
+      bus.$emit('selected-types', this.sectionCodes)
 
     }
   },
