@@ -49,7 +49,7 @@ export default {
     PatentFilters
   },
 
-  created() {
+  async created() {
 
     bus.$on('selected-countries', (selCountries) => {
       this.selCountries = selCountries
@@ -74,8 +74,12 @@ export default {
       this.filterEvents()
     })
 
-    conflictData.forEach((event) => {this.instigatorList.push(event.ACTOR1)})
-    conflictData.forEach((event) => {this.targetList.push(event.TARGET1)})
+    conflictData.forEach((event) => {
+      this.instigatorList.push(event.ACTOR1)
+    })
+    conflictData.forEach((event) => {
+      this.targetList.push(event.TARGET1)
+    })
 
     //Returns all conflict and patent data, as yet unfiltered, for the initial visualization.
     this.filterEvents()
