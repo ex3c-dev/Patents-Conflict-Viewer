@@ -41,7 +41,6 @@ import typelist from "@/types.json";
 import ConflictTypeFilter from "@/components/ConflictInstigatorFilter";
 import ConflictTargetFilter from "@/components/ConflictTargetFilter";
 import conflictData from "../USD_data.json";
-import helper from "../Helper.ts"
 
 export default {
   name: "FilterBar",
@@ -51,16 +50,6 @@ export default {
   },
 
   async created() {
-
-    helper.methods.test()
-    await helper.methods.getMax().then(res=> {
-      console.log("GOT TEST: " + res.size)
-      for (let [key, value] of res) {
-        console.log(key, value);
-      }
-    })
-
-
 
     bus.$on('selected-countries', (selCountries) => {
       this.selCountries = selCountries

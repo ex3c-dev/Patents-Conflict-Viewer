@@ -1,42 +1,69 @@
-/*import axios from "axios";
+import axios from "axios";
 
 let baseUrl = "http://84.252.122.16:3000/geoc_app?"
-*/
+
 const countryList = require('./countryList.json')
 const patentAmountList = require('./patentamount.json')
 
 export default {
-    methods: {
-        test() {
-            console.log("PRINTME");
-            console.log(countryList.length)
-        },
 
+    methods: {
+
+        /**
+         * Function to return number of patents registered in countries
+         */
         getMax: function() {
             let patenMap = new Map()
+
+            //Only needs to be run once
+            //this.getPatentCountForCountry()
 
             patentAmountList.forEach((entry) =>{
                 patenMap[entry.country] = entry.amount
             })
             return patenMap
+        },
 
-            /* TODO: Deine alte funktion noch caro
+        /**
+         *
+         * Function to format request parametrically
+         *
+         * @param property
+         * @param values
+         */
+        formatfilter(property, values=[]) {
+            let str = ""
+            if(values !== undefined && values.length > 0) {
+                str += "&&" +property + "=in.("
+                values.forEach((id, idx) => {
+                    str += id
+                    if (idx !== values.length -1) str += ","
+                })
+                str += ")"
+            }
+            return str
+        },
+
+        /**
+         * Function to get number of registered patents in each country.
+         * Is only run once and result is stored locally to save ressources.
+         */
+        getPatentCountForCountry: async function() {
+
             let text = "[\n"
-
             let offset = 1
             var joinedPatents =  new Map
 
-                let config = {
+            let config = {
                 headers: {
                     "prefer": "count=exact",
                 }
             }
-            console.log(text)
 
             await countryList.forEach((tmp,index) => {
 
+                const fs = require("fs");
                 let req = baseUrl + "name_0=in.(" + tmp + ")"
-
                 let reqString = req + "&&limit=" + offset
 
                 axios.get(reqString, config)
@@ -65,27 +92,11 @@ export default {
                     })
                 if(index === 3) {
                     console.log("last two")
-                    //return joinedPatents.valueOf()
                 }
             })
             return joinedPatents.valueOf()
-        },
-
-        formatfilter(property, values=[]) {
-            let str = ""
-            if(values !== undefined && values.length > 0) {
-                str += "&&" +property + "=in.("
-                values.forEach((id, idx) => {
-                    str += id
-                    if (idx !== values.length -1) str += ","
-                })
-                str += ")"
-            }
-            return str
-            */
-        },
+        }
     },
-
-    }
+}
 
 
