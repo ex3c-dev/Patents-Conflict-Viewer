@@ -77,8 +77,14 @@
           :id="event.EVENTID"
           :properties="{type: 'event', event: event}">
           <vl-geom-point
-            :coordinates="[parseFloat(event.LONG), parseFloat(event.LAT)]">
+            :coordinates="[parseFloat(event.spreadLONG), parseFloat(event.spreadLAT)]">
           </vl-geom-point>
+        <vl-style-box>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="white"></vl-style-fill>
+            <vl-style-stroke color="red"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style-box>
       </vl-feature>
 
       <vl-layer-tile id="osm">
@@ -93,6 +99,7 @@
 <script>
 import Vue from 'vue'
 import VueLayers from 'vuelayers'
+import FillStyle from 'vuelayers';
 import 'vuelayers/lib/style.css'
 import Timeline from "./Timeline";
 import VectorMap from "./VectorMap";
@@ -104,6 +111,7 @@ import {bus} from "@/main";
 import ClusterLayer from "@/components/ClusterLayer";
 
 Vue.use(VueLayers)
+Vue.use(FillStyle)
 
 export default {
   name: "LayerMap",
@@ -132,11 +140,24 @@ export default {
   },
   methods: {
     pointOnSurface: findPointOnSurface,
+
+    spreadPoints(conflictPoints) {
+      let spreadPointList = [];
+      conflictPoints.forEach((conflictPoint) => {
+        let spreadLong = parseFloat(conflictPoint.LONG) + ((Math.random() * 2) - 1);
+        let spreadLat = parseFloat(conflictPoint.LAT) + ((Math.random() * 2) - 1);
+        conflictPoint.spreadLONG = spreadLong;
+        conflictPoint.spreadLAT = spreadLat;
+        spreadPointList.push(conflictPoint);
+      });
+      return spreadPointList;
+    }
   },
   created() {
     bus.$on('filtered-USD', (data) => {
-      console.log(data);
-      this.events = data.slice(0, 200);
+      const shuffled = data.sort(() => 0.5 - Math.random());
+      const conflictPointNum = data.length / 10;
+      this.events = this.spreadPoints(shuffled.slice(0, conflictPointNum));
     });
   }
 }
