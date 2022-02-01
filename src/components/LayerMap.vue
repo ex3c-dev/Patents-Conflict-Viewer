@@ -35,54 +35,24 @@
               <template>
                 <!-- Events - Kriege, Terrorismus etc -->
                 <v-card v-if="feature.properties.type == 'event'">
-                  <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
+                  <v-img src="https://www.historynet.com/wp-content/uploads/2012/10/spotsylvania-header.jpg" height="200px"/>
                   <v-card-title>Event: {{feature.properties.event.COUNTRY}} - {{feature.properties.event.CITY}}</v-card-title>
                   <v-card-subtitle>{{feature.properties.event.ACTOR1}} vs {{feature.properties.event.TARGET1}}</v-card-subtitle>
-                  <v-card-actions>
-                    <v-btn color="orange lighten-2" text>Explore</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="show = !show">
-                      <v-icon>{{show ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-
-                  <v-expand-transition>
-                    <div v-show="show">
-                      <v-divider></v-divider>
-                      <v-card-text v-html="feature.properties.event.SUMMARY"> </v-card-text>
-                    </div>
-                  </v-expand-transition>
+                  <v-card-text v-html="feature.properties.event.SUMMARY"> </v-card-text>
                 </v-card>
                 <!-- Patents -->
                 <v-card v-if="feature.properties.type == 'patent'">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
-                  <v-card-title>Patent: {{feature.properties.data.lat}} - {{feature.properties.data.lng}}</v-card-title>
-                  <v-card-subtitle>{{feature.properties.data}}</v-card-subtitle>
+                  <v-card-title>Patent Office: {{feature.properties.data.patent_office}}</v-card-title>
+                  <v-card-subtitle>{{feature.properties.data.name_0}} - {{feature.properties.data.name_1}}</v-card-subtitle>
+                  <v-card-text>
+                    <v-list
+                      v-for="pclass in feature.properties.data.patentType"
+                      :key="pclass">
+                      <v-list-item>{{pclass}}</v-list-item>
+                    </v-list>
+                  </v-card-text>
                 </v-card>
-
-                <!--
-                <v-card class="mx-auto" max-width="344">
-                  <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
-                  <v-card-title>Feature ID: {{feature.id}}</v-card-title>
-                  <v-card-subtitle>Des is {{feature.id}}!</v-card-subtitle>
-                  <v-card-actions>
-                    <v-btn color="orange lighten-2" text>Explore</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="show = !show">
-                      <v-icon>{{show ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-
-                  <v-expand-transition>
-                    <div v-show="show">
-                      <v-divider></v-divider>
-                      <v-card-text>
-                        Popup: {{popup}} {{feature}}
-                      </v-card-text>
-                    </div>
-                  </v-expand-transition>
-                </v-card>
-                -->
               </template>
             </vl-overlay>
           </template>
@@ -101,14 +71,6 @@
       </vl-geoloc>
 
       <ClusterLayer></ClusterLayer>
-      <!--
-      <vl-feature
-          v-for="cluster in clusters"
-          :key="cluster.id"
-          :id="cluster.id">
-        <vl-geom-circle :coordinates="cluster.coordinates" :radius="cluster.radius" ></vl-geom-circle>
-      </vl-feature>
-      -->
       <vl-feature
           v-for="event in events"
           :key="event.EVENTID"
