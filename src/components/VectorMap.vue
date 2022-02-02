@@ -4,7 +4,8 @@
       <vl-feature
           v-for="feature in features"
           :key="feature.id"
-          :id="feature.id">
+          :id="feature.id"
+          :properties="{type: 'country', data: {}}">
         <vl-geom-multi-polygon :coordinates="feature.geometry.coordinates"></vl-geom-multi-polygon>
         <vl-style-box>
           <vl-style-stroke :color="feature.fillCol" :width="1"></vl-style-stroke>
