@@ -12,7 +12,6 @@
             <v-expansion-panel-content class="map-legend-content overflow-auto">
               <LegendPointLayer/>
               <LegendCountryLayer/>
-              <LegendClusterLayer/>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -59,8 +58,7 @@
         </vl-interaction-select>
       </vl-view>
 
-      <!-- Patent Charts-->
-      <Charts class="chartLayer"></Charts>
+      <Charts></Charts>
 
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
@@ -92,7 +90,6 @@ import VectorMap from "./VectorMap";
 import LegendCountryLayer from "@/components/LegendCountryLayer";
 import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
-import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
 import EventAndPatentLayer from "@/components/EventAndPatentLayer";
 import Charts from "@/components/Charts";
 
@@ -104,7 +101,6 @@ export default {
   components: {
     Charts,
     EventAndPatentLayer,
-    LegendClusterLayer,
     LegendPointLayer,
     Timeline,
     VectorMap,
@@ -137,10 +133,7 @@ export default {
   bottom: 0;
   margin-left: 30%;
 }
-.chartLayer{
-  position: absolute;
-  width: 50em;
-}
+
 .vectorMap{
   position: absolute;
 }

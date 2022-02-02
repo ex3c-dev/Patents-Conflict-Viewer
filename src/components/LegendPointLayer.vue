@@ -22,27 +22,15 @@
 <script>
 //import {bus} from "@/main";
 import {uuid} from 'vue-uuid'
-import {bus} from "@/main";
 export default {
   name: "LegendPointLayer",
   data() {
     return {
       pointLayer: [
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "BATTLES"},
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "VIOLENCE AGAINS CIVILIANS"},
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "EXPLOSIONS/REMOTE VIOLENCE"},
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "RIOTS"},
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "PROTESTS"},
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "STRATEGIC DEVELOPMENTS"},
-        {"ID": uuid.v1(), "Events": 400, "Color": this.randomColor(), "Text": "MULTIPLE EVENT TYPES"},
+        {"ID": uuid.v1(), "Events": 400, "Color": "#13BF9B", "Text": "Events"},
+        {"ID": uuid.v1(), "Events": 400, "Color": "#359acc", "Text": "Patents"},
       ]
     }
-  },
-  created() {
-    bus.$on('filtered-USD', (data) => {
-      console.log(data);
-      //this.conflictList = data;
-    });
   },
   methods: {
     randomColor(){
