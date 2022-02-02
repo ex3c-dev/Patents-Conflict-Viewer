@@ -10,9 +10,9 @@
               Map Legend
             </v-expansion-panel-header>
             <v-expansion-panel-content class="map-legend-content overflow-auto">
-                <LegendPointLayer/>
-                <LegendCountryLayer/>
-                <LegendClusterLayer/>
+              <LegendPointLayer/>
+              <LegendCountryLayer/>
+              <LegendClusterLayer/>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -20,7 +20,7 @@
       <!-- Map Legend end -->
 
 
-      <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation" :min-zoom="3">
+      <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation">
         <vl-interaction-select v-if="drawType == null" :features.sync="selectedFeatures">
           <template>
 
@@ -35,62 +35,29 @@
               <template>
                 <!-- Events - Kriege, Terrorismus etc -->
                 <v-card v-if="feature.properties.type == 'event'">
-                  <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
+                  <v-img src="https://www.historynet.com/wp-content/uploads/2012/10/spotsylvania-header.jpg" height="200px"/>
                   <v-card-title>Event: {{feature.properties.event.COUNTRY}} - {{feature.properties.event.CITY}}</v-card-title>
                   <v-card-subtitle>{{feature.properties.event.ACTOR1}} vs {{feature.properties.event.TARGET1}}</v-card-subtitle>
-                  <v-card-actions>
-                    <v-btn color="orange lighten-2" text>Explore</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="show = !show">
-                      <v-icon>{{show ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-
-                  <v-expand-transition>
-                    <div v-show="show">
-                      <v-divider></v-divider>
-                      <v-card-text v-html="feature.properties.event.SUMMARY"> </v-card-text>
-                    </div>
-                  </v-expand-transition>
+                  <v-card-text v-html="feature.properties.event.SUMMARY"> </v-card-text>
                 </v-card>
                 <!-- Patents -->
                 <v-card v-if="feature.properties.type == 'patent'">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
-                  <v-card-title>Patent: {{feature.properties.data.lat}} - {{feature.properties.data.lng}}</v-card-title>
-                  <v-card-subtitle>{{feature.properties.data}}</v-card-subtitle>
+                  <v-card-title>Patent Office: {{feature.properties.data.patent_office}}</v-card-title>
+                  <v-card-subtitle>{{feature.properties.data.name_0}} - {{feature.properties.data.name_1}}</v-card-subtitle>
+                  <v-card-text>
+                    <v-list
+                        v-for="pclass in feature.properties.data.patentType"
+                        :key="pclass">
+                      <v-list-item>{{pclass}}</v-list-item>
+                    </v-list>
+                  </v-card-text>
                 </v-card>
-
-
-                <!--
-                <v-card class="mx-auto" max-width="344">
-                  <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
-                  <v-card-title>Feature ID: {{feature.id}}</v-card-title>
-                  <v-card-subtitle>Des is {{feature.id}}!</v-card-subtitle>
-                  <v-card-actions>
-                    <v-btn color="orange lighten-2" text>Explore</v-btn>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="show = !show">
-                      <v-icon>{{show ? 'mdi-chevron-up' : 'mdi-chevron-down'}}</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-
-                  <v-expand-transition>
-                    <div v-show="show">
-                      <v-divider></v-divider>
-                      <v-card-text>
-                        Popup: {{popup}} {{feature}}
-                      </v-card-text>
-                    </div>
-                  </v-expand-transition>
-                </v-card>
-                -->
               </template>
             </vl-overlay>
           </template>
         </vl-interaction-select>
-
       </vl-view>
-
 
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
@@ -103,45 +70,28 @@
         </template>
       </vl-geoloc>
 
-
-
-      <Charts class="charts"></Charts>
-
-      <!--
-      <vl-feature
-          v-for="cluster in clusters"
-          :key="cluster.id"
-          :id="cluster.id">
-        <vl-geom-circle :coordinates="cluster.coordinates" :radius="cluster.radius" ></vl-geom-circle>
-      </vl-feature>
-
-
-<ClusterLayer class="clusters"></ClusterLayer>
-      -->
-
-
-
-
-
-
-
-
+      <ClusterLayer></ClusterLayer>
+      <Charts></Charts>
 
       <vl-feature
           v-for="event in events"
           :key="event.EVENTID"
           :id="event.EVENTID"
           :properties="{type: 'event', event: event}">
-          <vl-geom-point
-            :coordinates="[parseFloat(event.LONG), parseFloat(event.LAT)]">
-          </vl-geom-point>
+        <vl-geom-point
+            :coordinates="[parseFloat(event.spreadLONG), parseFloat(event.spreadLAT)]">
+        </vl-geom-point>
+        <vl-style-box>
+          <vl-style-circle :radius="5">
+            <vl-style-fill color="white"></vl-style-fill>
+            <vl-style-stroke color="red"></vl-style-stroke>
+          </vl-style-circle>
+        </vl-style-box>
       </vl-feature>
-
 
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
-
       <Timeline class="timeline"></Timeline>
       <VectorMap class="vectorMap"></VectorMap>
     </vl-map>
@@ -151,6 +101,7 @@
 <script>
 import Vue from 'vue'
 import VueLayers from 'vuelayers'
+import FillStyle from 'vuelayers';
 import 'vuelayers/lib/style.css'
 import Timeline from "./Timeline";
 import VectorMap from "./VectorMap";
@@ -159,13 +110,17 @@ import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
 import {bus} from "@/main";
+import ClusterLayer from "@/components/ClusterLayer";
 import Charts from "@/components/Charts";
+
 Vue.use(VueLayers)
+Vue.use(FillStyle)
 
 export default {
   name: "LayerMap",
   components: {
     Charts,
+    ClusterLayer,
     LegendClusterLayer,
     LegendPointLayer,
     Timeline,
@@ -189,11 +144,24 @@ export default {
   },
   methods: {
     pointOnSurface: findPointOnSurface,
+
+    spreadPoints(conflictPoints) {
+      let spreadPointList = [];
+      conflictPoints.forEach((conflictPoint) => {
+        let spreadLong = parseFloat(conflictPoint.LONG) + ((Math.random() * 2) - 1);
+        let spreadLat = parseFloat(conflictPoint.LAT) + ((Math.random() * 2) - 1);
+        conflictPoint.spreadLONG = spreadLong;
+        conflictPoint.spreadLAT = spreadLat;
+        spreadPointList.push(conflictPoint);
+      });
+      return spreadPointList;
+    }
   },
   created() {
     bus.$on('filtered-USD', (data) => {
-      console.log(data);
-      this.events = data.slice(0, 200);
+      const shuffled = data.sort(() => 0.5 - Math.random());
+      const conflictPointNum = data.length / 10;
+      this.events = this.spreadPoints(shuffled.slice(0, conflictPointNum));
     });
   }
 }
@@ -204,9 +172,6 @@ export default {
   position: absolute;
   bottom: 0;
   margin-left: 30%;
-}
-
-.charts{
 }
 
 .vectorMap{
@@ -249,8 +214,8 @@ export default {
   position: absolute;
   right: 0;
   width: 30%;
-  margin-top: 15px;
-  margin-right: 8px;
+  margin-top: 5px;
+  margin-right: 5px;
 }
 .map-legend-content{
   max-height: 500px;
