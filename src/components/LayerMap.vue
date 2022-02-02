@@ -12,7 +12,6 @@
             <v-expansion-panel-content class="map-legend-content overflow-auto">
                 <LegendPointLayer/>
                 <LegendCountryLayer/>
-                <LegendClusterLayer/>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -89,7 +88,6 @@ import VectorMap from "./VectorMap";
 import LegendCountryLayer from "@/components/LegendCountryLayer";
 import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
-import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
 import EventAndPatentLayer from "@/components/EventAndPatentLayer";
 
 Vue.use(VueLayers)
@@ -99,7 +97,6 @@ export default {
   name: "LayerMap",
   components: {
     EventAndPatentLayer,
-    LegendClusterLayer,
     LegendPointLayer,
     Timeline,
     VectorMap,
