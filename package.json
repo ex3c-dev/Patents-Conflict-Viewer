@@ -8,7 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vue/cli": "^4.5.15",
     "all-the-cities": "^3.1.0",
+    "apexcharts": "^3.33.0",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "geojson": "^0.5.0",
@@ -16,6 +18,7 @@
     "topojson": "^3.0.2",
     "topojson-client": "^3.1.0",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.2",
     "vue-histogram-slider": "^0.3.8",
     "vue-uuid": "^2.0.2",
     "vue2-leaflet": "^2.7.1",

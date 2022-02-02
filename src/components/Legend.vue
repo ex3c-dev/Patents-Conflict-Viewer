@@ -70,6 +70,8 @@ export default {
       { text: 'F41 - Weapons', icon: 'mdi-hexagon', color: '#9ff1bf' },
       { text: 'A61 - Medical or veterinary science; hygiene', icon: 'mdi-hexagon', color: '#f0f3a6' },
     ],
+
+
   }),
 }
 </script>

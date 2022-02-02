@@ -10,8 +10,9 @@
               Map Legend
             </v-expansion-panel-header>
             <v-expansion-panel-content class="map-legend-content overflow-auto">
-                <LegendPointLayer/>
-                <LegendCountryLayer/>
+              <LegendPointLayer/>
+              <LegendCountryLayer/>
+              <ChartLayerLegend/>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -46,8 +47,8 @@
                   <v-card-subtitle>{{feature.properties.data.name_0}} - {{feature.properties.data.name_1}}</v-card-subtitle>
                   <v-card-text>
                     <v-list
-                      v-for="pclass in feature.properties.data.patentType"
-                      :key="pclass">
+                        v-for="pclass in feature.properties.data.patentType"
+                        :key="pclass">
                       <v-list-item>{{pclass}}</v-list-item>
                     </v-list>
                   </v-card-text>
@@ -57,6 +58,8 @@
           </template>
         </vl-interaction-select>
       </vl-view>
+
+      <Charts></Charts>
 
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
@@ -89,6 +92,8 @@ import LegendCountryLayer from "@/components/LegendCountryLayer";
 import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import EventAndPatentLayer from "@/components/EventAndPatentLayer";
+import Charts from "@/components/Charts";
+import ChartLayerLegend from "@/components/ChartLayerLegend";
 
 Vue.use(VueLayers)
 Vue.use(FillStyle)
@@ -96,6 +101,8 @@ Vue.use(FillStyle)
 export default {
   name: "LayerMap",
   components: {
+    ChartLayerLegend,
+    Charts,
     EventAndPatentLayer,
     LegendPointLayer,
     Timeline,
