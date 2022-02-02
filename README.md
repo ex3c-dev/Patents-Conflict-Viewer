@@ -6,7 +6,7 @@ http://infoviz-team16.ex3c.de
 **Introduction Team:**
 
 - Julia Glöß 
-- Johanna Carolina Gerhardt
+- Johanna Carolina Gerhardt (powerkarrot)
 - Tobias Theus
 - Nina Wüst
 
