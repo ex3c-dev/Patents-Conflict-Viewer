@@ -13,15 +13,15 @@ export default {
          * Function to return number of patents registered in countries
          */
         getMax: function() {
-            let patenMap = new Map()
+            let patentMap = new Map()
 
             //Only needs to be run once
             //this.getPatentCountForCountry()
 
             patentAmountList.forEach((entry) =>{
-                patenMap[entry.country] = entry.amount
+                patentMap.set(entry.country, entry.amount)
             })
-            return patenMap
+            return patentMap
         },
 
         /**
