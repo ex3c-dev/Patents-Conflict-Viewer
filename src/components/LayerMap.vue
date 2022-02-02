@@ -38,7 +38,7 @@
                   <v-img src="https://www.historynet.com/wp-content/uploads/2012/10/spotsylvania-header.jpg" height="200px"/>
                   <v-card-title>Event: {{feature.properties.event.COUNTRY}} - {{feature.properties.event.CITY}}</v-card-title>
                   <v-card-subtitle>{{feature.properties.event.ACTOR1}} vs {{feature.properties.event.TARGET1}}</v-card-subtitle>
-                  <v-card-text v-html="feature.properties.event.SUMMARY"> </v-card-text>
+                  <v-card-text style="max-height: 200px; overflow-y: auto;" v-html="feature.properties.event.SUMMARY" max-height="200" overflow-y-auto></v-card-text>
                 </v-card>
                 <!-- Patents -->
                 <v-card v-if="feature.properties.type == 'patent'">
@@ -69,24 +69,7 @@
           </vl-feature>
         </template>
       </vl-geoloc>
-
-      <ClusterLayer></ClusterLayer>
-      <vl-feature
-          v-for="event in events"
-          :key="event.EVENTID"
-          :id="event.EVENTID"
-          :properties="{type: 'event', event: event}">
-          <vl-geom-point
-            :coordinates="[parseFloat(event.spreadLONG), parseFloat(event.spreadLAT)]">
-          </vl-geom-point>
-        <vl-style-box>
-          <vl-style-circle :radius="5">
-            <vl-style-fill color="white"></vl-style-fill>
-            <vl-style-stroke color="red"></vl-style-stroke>
-          </vl-style-circle>
-        </vl-style-box>
-      </vl-feature>
-
+      <EventAndPatentLayer></EventAndPatentLayer>
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
@@ -107,8 +90,7 @@ import LegendCountryLayer from "@/components/LegendCountryLayer";
 import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
-import {bus} from "@/main";
-import ClusterLayer from "@/components/ClusterLayer";
+import EventAndPatentLayer from "@/components/EventAndPatentLayer";
 
 Vue.use(VueLayers)
 Vue.use(FillStyle)
@@ -116,7 +98,7 @@ Vue.use(FillStyle)
 export default {
   name: "LayerMap",
   components: {
-    ClusterLayer,
+    EventAndPatentLayer,
     LegendClusterLayer,
     LegendPointLayer,
     Timeline,
@@ -140,26 +122,7 @@ export default {
   },
   methods: {
     pointOnSurface: findPointOnSurface,
-
-    spreadPoints(conflictPoints) {
-      let spreadPointList = [];
-      conflictPoints.forEach((conflictPoint) => {
-        let spreadLong = parseFloat(conflictPoint.LONG) + ((Math.random() * 2) - 1);
-        let spreadLat = parseFloat(conflictPoint.LAT) + ((Math.random() * 2) - 1);
-        conflictPoint.spreadLONG = spreadLong;
-        conflictPoint.spreadLAT = spreadLat;
-        spreadPointList.push(conflictPoint);
-      });
-      return spreadPointList;
-    }
   },
-  created() {
-    bus.$on('filtered-USD', (data) => {
-      const shuffled = data.sort(() => 0.5 - Math.random());
-      const conflictPointNum = data.length / 10;
-      this.events = this.spreadPoints(shuffled.slice(0, conflictPointNum));
-    });
-  }
 }
 </script>
 
