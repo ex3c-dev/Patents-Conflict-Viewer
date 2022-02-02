@@ -19,22 +19,6 @@
         </div>
       </template>
     </vl-overlay>
-
-    <!--
-    <template>
-      <div>
-        <vl-feature
-            v-for="patentCircle in emptyPatentList"
-            :key="patentCircle.id"
-            :id="patentCircle.id">
-          <vl-geom-circle :coordinates="patentCircle.coordinates" :radius="10000"></vl-geom-circle>
-        </vl-feature>
-      </div>
-    </template>
-    -->
-
-
-
   </div>
 </template>
 
@@ -62,7 +46,7 @@ export default {
     return {
       centralPointsList: centralPoints,
       emptyPatentList: [],
-      sumTitle: "",
+      title: "",
       mapValue: [],
       patentData: [],
       testData: new Map,
@@ -74,7 +58,7 @@ export default {
           type: 'pie'
         },
         title: {
-          text: this.sumTitle,
+          text: "",
           align: 'center',
           style: {
             fontSize:  '20px',
@@ -82,6 +66,9 @@ export default {
           },
         },
         legend: {
+          show: false
+        },
+        stroke: {
           show: false
         },
         theme: {
@@ -125,13 +112,7 @@ export default {
       console.log("Select Patents");
       this.patentChartList = [];
       let maxValues = helper.methods.getMax();
-
-      this.maxPatentList = maxValues.entries();
-
-      console.log(maxValues);
-
-
-      //console.log(this.maxPatentList);
+      console.log(maxValues)
 
       if (this.selectedCountries.length === 0) {
         this.selectedCountries = countryList;
@@ -140,26 +121,25 @@ export default {
       this.selectedCountries.forEach((country) => {
 
         let filteredPatentCountry = this.patentData.filter(patent => patent.name_0 === country);
-        let sum = filteredPatentCountry.length;
+        //let sum = filteredPatentCountry.length;
+        let sumMax = maxValues.get(country);
 
-
-        //let sumMax = this.maxPatentList[country];
-
+        //console.log("Country: " + country + "Sum:" + sumMax);
         let chartSize;
 
 
         //console.log(sumMax);
 
-        if(sum < 100) {
+        if(sumMax < 100) {
+          chartSize = "40%"
+        } else if (sumMax < 1000) {
+          chartSize = "45%"
+        } else if (sumMax < 5000) {
           chartSize = "50%"
-        } else if (sum < 500) {
-          chartSize = "60%"
-        } else if (sum < 1000) {
-          chartSize = "70%"
-        } else if (sum < 1500) {
-          chartSize = "80%"
+        } else if (sumMax < 10000) {
+          chartSize = "55%"
         } else {
-          chartSize = "100%"
+          chartSize = "70%"
         }
 
         //console.log("Country: " + country + " Amount: " + sum);
@@ -213,17 +193,12 @@ export default {
           centralPoint = [actualCountry.longitude, actualCountry.latitude]
           //let sumCounter = aCounter + bCounter + cCounter + dCounter + eCounter + fCounter + gCounter + hCounter;
           let series = [aCounter, bCounter, cCounter, dCounter, eCounter, fCounter, gCounter, hCounter, undefinedTypes];
-          let patentChart = {name: country, coordinates: centralPoint, diameter: chartSize, series: series};
+          let patentChart = {name: country, coordinates: centralPoint, diameter: chartSize, series: series, chartTitle: sumMax};
           //console.log(patentChart);
-          if(sum > 0) {
+          if(sumMax > 0) {
+            //console.log("Country: " + country + " Sum: " + sumMax)
             this.patentChartList.push(patentChart);
-          } /*else {
-
-            console.log("emptyPatent: " + country)
-
-            let emptyPatentCircle = {name: country, coordinates: centralPoint};
-            this.emptyPatentList.push(emptyPatentCircle)
-          }*/
+          }
         }
       })
     }

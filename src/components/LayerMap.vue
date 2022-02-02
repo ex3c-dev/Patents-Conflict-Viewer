@@ -60,7 +60,7 @@
       </vl-view>
 
       <!-- Patent Charts-->
-      <Charts></Charts>
+      <Charts class="chartLayer"></Charts>
 
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
@@ -137,7 +137,10 @@ export default {
   bottom: 0;
   margin-left: 30%;
 }
-
+.chartLayer{
+  position: absolute;
+  width: 50em;
+}
 .vectorMap{
   position: absolute;
 }
