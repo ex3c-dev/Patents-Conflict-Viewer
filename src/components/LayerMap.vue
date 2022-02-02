@@ -88,6 +88,7 @@
             </vl-overlay>
           </template>
         </vl-interaction-select>
+
       </vl-view>
 
 
@@ -103,6 +104,9 @@
       </vl-geoloc>
 
 
+
+      <Charts class="charts"></Charts>
+
       <!--
       <vl-feature
           v-for="cluster in clusters"
@@ -112,11 +116,13 @@
       </vl-feature>
 
 
-
+<ClusterLayer class="clusters"></ClusterLayer>
       -->
 
-      <ClusterLayer class="clusters"></ClusterLayer>
-      <Charts></Charts>
+
+
+
+
 
 
 
@@ -154,14 +160,12 @@ import LegendPointLayer from "@/components/LegendPointLayer";
 import LegendClusterLayer from "@/components/LegendClusterLayer"; // needs css-loader
 import {bus} from "@/main";
 import Charts from "@/components/Charts";
-import ClusterLayer from "@/components/ClusterLayer";
 Vue.use(VueLayers)
 
 export default {
   name: "LayerMap",
   components: {
     Charts,
-    ClusterLayer,
     LegendClusterLayer,
     LegendPointLayer,
     Timeline,
@@ -202,8 +206,7 @@ export default {
   margin-left: 30%;
 }
 
-.clusters{
-  position: absolute;
+.charts{
 }
 
 .vectorMap{
