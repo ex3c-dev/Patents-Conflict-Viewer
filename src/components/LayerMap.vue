@@ -12,6 +12,7 @@
             <v-expansion-panel-content class="map-legend-content overflow-auto">
               <LegendPointLayer/>
               <LegendCountryLayer/>
+              <ChartLayerLegend/>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -92,6 +93,7 @@ import {findPointOnSurface} from "vuelayers/lib/ol-ext";
 import LegendPointLayer from "@/components/LegendPointLayer";
 import EventAndPatentLayer from "@/components/EventAndPatentLayer";
 import Charts from "@/components/Charts";
+import ChartLayerLegend from "@/components/ChartLayerLegend";
 
 Vue.use(VueLayers)
 Vue.use(FillStyle)
@@ -99,6 +101,7 @@ Vue.use(FillStyle)
 export default {
   name: "LayerMap",
   components: {
+    ChartLayerLegend,
     Charts,
     EventAndPatentLayer,
     LegendPointLayer,

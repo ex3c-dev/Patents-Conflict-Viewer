@@ -71,6 +71,13 @@ export default {
         stroke: {
           show: false
         },
+        fill: {
+          colors: ['#023858', '#045a8d', '#0570b0', '#3690c0',
+            '#74a9cf', '#a6bddb', '#d0d1e6', '#ece7f2',
+            '#868686']
+        },
+
+        /*
         theme: {
           monochrome: {
             enabled: true,
@@ -78,11 +85,14 @@ export default {
             shadeTo: 'light',
             shadeIntensity: 0.65
           }
-        },
+        },*/
         labels: ["A: Human Necessities", "B: Transporting / Performing Operations",
           "C: Chemistry / Metallurgy", "D: Textiles / Paper", "E: Fixed Constructions",
           "F: Mechanical Engineering / Lighting / Heating / Weapons / Blasting / Engines or Pumps", "G: Physics",
           "H: Electricity", "Undefined"],
+        colors: ['#023858', '#045a8d', '#0570b0', '#3690c0',
+          '#74a9cf', '#a6bddb', '#d0d1e6', '#ece7f2',
+          '#868686']
       },
     }
   },
