@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vl-map :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
+    <vl-map :load-tiles-while-animating="false" :load-tiles-while-interacting="false"
             data-projection="EPSG:4326" style="height: 100%; width: 100%">
       <!-- Map Legend -->
       <div class="map-legend">
