@@ -78,7 +78,7 @@ export default {
 
   watch: {
     selSections: async function () {
-
+      this.sectionCodes = [];
       this.selSections.forEach(el => {
         let code = el.split(" -")
         this.sectionCodes.push(code[0])
