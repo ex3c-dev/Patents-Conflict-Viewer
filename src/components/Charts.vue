@@ -7,14 +7,8 @@
         :key="patentChart.name"
         :id="patentChart.name">
       <template>
-        <div>
-          <apexchart
-              type="pie"
-              :height=patentChart.diameter
-              :width=patentChart.diameter
-              :options="chartOptions"
-              :series="patentChart.series">
-          </apexchart>
+        <div style="width:100px; height:100px">
+          <v-chart :option="patentChart.options"></v-chart>
         </div>
       </template>
     </vl-overlay>
@@ -23,7 +17,25 @@
 
 <script>
 import Vue from 'vue'
-import VueApexCharts from 'vue-apexcharts'
+import ECharts from 'vue-echarts'
+import { use } from 'echarts/core'
+import {
+  CanvasRenderer
+} from 'echarts/renderers'
+import {
+  PieChart
+} from 'echarts/charts'
+import {
+  TitleComponent,
+  TooltipComponent
+} from 'echarts/components'
+
+use([
+  CanvasRenderer,
+  PieChart,
+  TitleComponent,
+  TooltipComponent
+]);
 import {bus} from "@/main";
 import centralPoints from "../countries.json";
 import VueLayers from "vuelayers";
@@ -31,12 +43,10 @@ import Overlay from "vuelayers";
 import countryList from "../countryList.json"
 import helper from "../Helper.ts"
 
-Vue.use(Overlay)
-
 Vue.use(VueLayers)
-Vue.use(VueApexCharts)
-Vue.component('apexchart', VueApexCharts)
-
+Vue.use(Overlay)
+Vue.use(ECharts)
+Vue.component('v-chart', ECharts)
 
 export default {
   name: "Charts",
@@ -44,54 +54,12 @@ export default {
   data() {
     return {
       centralPointsList: centralPoints,
-      emptyPatentList: [],
-      title: "",
-      mapValue: [],
       patentData: [],
-      testData: new Map,
       selectedCountries: [],
-      maxPatentList: [],
       selSections: [],
       selTypes: [],
       loading: false,
       patentChartList: [],
-      chartOptions: {
-        chart: {
-          type: 'pie',
-          animations: {
-            enabled: false
-          }
-        },
-        title: {
-          text: "",
-          align: 'center',
-          style: {
-            fontSize: '20px',
-            color: '#E91E63',
-          },
-        },
-        legend: {
-          show: false
-        },
-        stroke: {
-          show: false
-        },
-        dataLabels: {
-          enabled: false
-        },
-        fill: {
-          colors: ['#023858', '#045a8d', '#0570b0', '#3690c0',
-            '#74a9cf', '#a6bddb', '#d0d1e6', '#ece7f2',
-            '#868686']
-        },
-        labels: ["A: Human Necessities", "B: Transporting / Performing Operations",
-          "C: Chemistry / Metallurgy", "D: Textiles / Paper", "E: Fixed Constructions",
-          "F: Mechanical Engineering / Lighting / Heating / Weapons / Blasting / Engines or Pumps", "G: Physics",
-          "H: Electricity", "Undefined"],
-        colors: ['#023858', '#045a8d', '#0570b0', '#3690c0',
-          '#74a9cf', '#a6bddb', '#d0d1e6', '#ece7f2',
-          '#868686']
-      },
     }
   },
   async created() {
@@ -137,16 +105,16 @@ export default {
           let sumMax = maxValues.get(country);
 
           let chartSize;
-          if(sumMax < 100) {
+          if(sumMax < 1000) {
             chartSize = "40%"
-          } else if (sumMax < 1000) {
-            chartSize = "45%"
-          } else if (sumMax < 5000) {
-            chartSize = "50%"
           } else if (sumMax < 10000) {
-            chartSize = "55%"
-          } else {
+            chartSize = "50%"
+          } else if (sumMax < 100000) {
+            chartSize = "60%"
+          } else if (sumMax < 300000) {
             chartSize = "70%"
+          } else {
+            chartSize = "80%"
           }
 
           let aCounter = 0;
@@ -190,9 +158,70 @@ export default {
 
           let actualCountry = this.centralPointsList.find((centerCountry) => (centerCountry.name === country));
           if (actualCountry) {
-            centralPoint = [actualCountry.longitude, actualCountry.latitude]
-            let series = [aCounter, bCounter, cCounter, dCounter, eCounter, fCounter, gCounter, hCounter, undefinedTypes];
-            let patentChart = {name: country, coordinates: centralPoint, diameter: chartSize, series: series, chartTitle: sumMax};
+            centralPoint = [actualCountry.longitude, actualCountry.latitude];
+            let patentChart = {name: country, coordinates: centralPoint, options: {
+              title: {
+                text: sumMax,
+                left: 'center',
+                top: 20,
+                textStyle: {
+                  color: '#ccc'
+                }
+              },
+              tooltip: {
+                trigger: 'item'
+              },
+              series: [
+              {
+                type: 'pie',
+                stillShowZeroSum: false,
+                label: {
+                  show: false
+                },
+                data: [
+                  {
+                    value: aCounter,
+                    name: 'A: Human Necessities'
+                  },
+                  {
+                    value: bCounter,
+                    name: 'B: Transporting / Performing Operations'
+                  },
+                  {
+                    value: cCounter,
+                    name: 'C: Chemistry / Metallurgy'
+                  },
+                  {
+                    value: dCounter,
+                    name: 'D: Textiles / Paper'
+                  },
+                  {
+                    value: eCounter,
+                    name: 'E: Fixed Constructions'
+                  },
+                  {
+                    value: fCounter,
+                    name: 'F: Mechanical Engineering / Lighting / Heating / Weapons / Blasting / Engines or Pumps'
+                  },
+                  {
+                    value: gCounter,
+                    name: 'G: Physics'
+                  },
+                  {
+                    value: hCounter,
+                    name: 'H: Electricity'
+                  },
+                  {
+                    value: undefinedTypes,
+                    name: 'Undefined'
+                  }
+                ],
+                radius: chartSize,
+                color: ['#023858', '#045a8d', '#0570b0', '#3690c0',
+                  '#74a9cf', '#a6bddb', '#d0d1e6', '#ece7f2',
+                  '#868686']
+              }
+            ]}};
             display_Chart.push(patentChart);
           }
         }

@@ -59,8 +59,6 @@
         </vl-interaction-select>
       </vl-view>
 
-      <Charts></Charts>
-
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
@@ -77,6 +75,7 @@
       </vl-layer-tile>
       <Timeline class="timeline"></Timeline>
       <VectorMap class="vectorMap"></VectorMap>
+      <Charts></Charts>
     </vl-map>
   </div>
 </template>
@@ -136,6 +135,7 @@ export default {
   bottom: 0;
   margin-left: 30%;
 }
+
 
 .vectorMap{
   position: absolute;
