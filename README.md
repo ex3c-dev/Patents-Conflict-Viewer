@@ -3,6 +3,8 @@
 **Website link:**
 http://infoviz-team16.ex3c.de
 
+Note: Project is optimized for chromium-based browsers
+
 **Introduction Team:**
 
 - Julia Glöß 
