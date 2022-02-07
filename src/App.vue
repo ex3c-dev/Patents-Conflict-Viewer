@@ -1,5 +1,5 @@
 <template>
-
+  <!-- Main entry point for our vue app. Responsible for the general layout of the application. -->
   <v-app>
     <v-app-bar app color="primaryDark" dark>
       <div class="d-flex align-center">
@@ -59,11 +59,5 @@ export default {
   min-height: 50%;
   width: 80%;
   float: left;
-}
-
-.legend{
-  width: 80%;
-  height: 35%;
-  overflow: hidden;
 }
 </style>

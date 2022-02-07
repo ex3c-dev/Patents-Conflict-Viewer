@@ -1,4 +1,5 @@
 <template>
+  <!-- Generates a legend container -->
   <v-container fluid>
     <v-card dark color="primary">
       <v-card-subtitle>Country conflict Layer</v-card-subtitle>
@@ -37,8 +38,11 @@ export default {
     }
   },
   created() {
+    /**
+     * Subsribes to the NumberOfEvents bus and fills the country layer legend dynamically.
+     * Gets the data from the VectorMap.vue component
+     */
     bus.$on('NumberOfEvents', (data) => {
-      console.log(data);
       this.countryLayer = data.slice();
       this.countryLayer.sort(function (a, b) {return a.Events - b.Events})
     });
@@ -47,8 +51,5 @@ export default {
 </script>
 
 <style scoped>
-.list {
-  max-height: 200px;
-}
 
 </style>

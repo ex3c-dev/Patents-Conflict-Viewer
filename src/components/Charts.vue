@@ -1,4 +1,5 @@
 <template>
+  <!-- Generates a overlay to display the patent pie charts -->
   <div>
     <vl-overlay
         v-for="patentChart in patentChartList"
@@ -21,23 +22,9 @@
 import Vue from 'vue'
 import ECharts from 'vue-echarts'
 import { use } from 'echarts/core'
-import {
-  CanvasRenderer
-} from 'echarts/renderers'
-import {
-  PieChart
-} from 'echarts/charts'
-import {
-  TitleComponent,
-  TooltipComponent
-} from 'echarts/components'
-
-use([
-  CanvasRenderer,
-  PieChart,
-  TitleComponent,
-  TooltipComponent
-]);
+import {CanvasRenderer} from 'echarts/renderers'
+import {PieChart} from 'echarts/charts'
+import {TitleComponent, TooltipComponent} from 'echarts/components'
 import {bus} from "@/main";
 import centralPoints from "../countries.json";
 import VueLayers from "vuelayers";
@@ -49,6 +36,13 @@ Vue.use(VueLayers)
 Vue.use(Overlay)
 Vue.use(ECharts)
 Vue.component('v-chart', ECharts)
+
+use([
+  CanvasRenderer,
+  PieChart,
+  TitleComponent,
+  TooltipComponent
+]);
 
 export default {
   name: "Charts",
@@ -68,20 +62,33 @@ export default {
     }
   },
   async created() {
+    /**
+     * Subscribes to the selected-countries bus
+     */
     bus.$on('selected-countries', (selCountries) => {
       this.selectedCountries = selCountries
     })
+    /**
+     * Subscribes to the filtered-map bus
+     */
     bus.$on('filtered-map', (data) => {
       this.patentData = [];
       data.forEach((value) => {
         this.patentData.push(value);
       });
     })
+    /**
+     * Subscribes to the selected-types bus
+     */
     bus.$on('selected-types', (selSections) => {
       this.selSections = selSections;
     })
   },
   watch: {
+    /**
+     * Watcher for the patentData, Regenerates the pie charts if patent filter changes
+     * @returns {Promise<void>}
+     */
     patentData: async function () {
       this.patentChartList = [];
       this.selTypes = this.getMainTypes();
@@ -94,7 +101,8 @@ export default {
   },
   methods: {
     /**
-     * Function returning one patent chart for each country with different patent types
+     * Generates the patent charts for each country with different patent types
+     * @returns {Promise<unknown>}
      */
     generateCharts() {
       let display_Chart = [];
@@ -110,6 +118,7 @@ export default {
           let sumMax = maxValues.get(country);
 
           let chartSize;
+          // Set the size for the charts based on total amount of patents.
           if(sumMax < 1000) {
             chartSize = "40%"
           } else if (sumMax < 10000) {
@@ -133,13 +142,13 @@ export default {
           let undefinedTypes = 0;
           let centralPoint = [];
 
+          // Filter the patent categories
           filteredPatentCountry.forEach((patentType) => {
             let patentTypeAr = patentType.patentType;
             if (patentTypeAr.length === 0) {
               undefinedTypes++;
             } else {
               patentTypeAr.forEach((patent) => {
-                //console.log("Defined");
                 if (patent.startsWith("A") && this.selTypes.includes('A')) {
                   aCounter++;
                 } else if (patent.startsWith("B") && this.selTypes.includes('B')) {
@@ -161,9 +170,11 @@ export default {
             }
           });
 
+          // Chart should be generated in the middle point of each country, this makes sure it does that.
           let actualCountry = this.centralPointsList.find((centerCountry) => (centerCountry.name === country));
           if (actualCountry) {
             centralPoint = [actualCountry.longitude, actualCountry.latitude];
+            // Fill the chart data
             let patentChart = {name: country, coordinates: centralPoint, options: {
               title: {
                 text: sumMax,
@@ -231,6 +242,7 @@ export default {
                   '#868686']
               }
             ]}};
+            // Add generated chart
             display_Chart.push(patentChart);
           }
         }
@@ -243,6 +255,10 @@ export default {
       });
     },
 
+    /**
+     * Returns the patent types for a chart
+     * @returns {*[]} The main patent types aka A, B, ...
+     */
     getMainTypes() {
       let mainTypes = [];
       if (this.selSections.length > 0) {

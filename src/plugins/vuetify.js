@@ -1,9 +1,11 @@
 import Vue from 'vue';
+// Vuetify library used to make the site look pretty. Basically a material design implementation for vue
 import Vuetify from 'vuetify/lib/framework';
 
 Vue.use(Vuetify);
 
 export default new Vuetify({
+    // Our color theme we used for the vuetify components. Color inspiration taken from adobe color project
     theme: {
         themes: {
             dark: {

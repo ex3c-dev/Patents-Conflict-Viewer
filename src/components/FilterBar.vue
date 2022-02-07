@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import TestComponent from "./TestComponent"; // needs css-loader
 import PatentFilters from "@/components/PatentFilters";
 import PatentTypeFilter from "@/components/PatentTypeFilter";
 import {bus} from "@/main";
@@ -43,7 +42,6 @@ import conflictData from "../USD_data.json";
 export default {
   name: "FilterBar",
   components: {
-    TestComponent,
     PatentFilters
   },
 

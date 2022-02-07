@@ -1,4 +1,5 @@
 <template>
+  <!-- Generates a legend container -->
   <v-container fluid>
     <v-card dark color="primary">
       <v-card-subtitle>Histogram</v-card-subtitle>
@@ -31,6 +32,10 @@ export default {
     }
   },
   methods: {
+    /**
+     * Generates a random rgb string for usage in css
+     * @returns {string}
+     */
     randomColor(){
       return 'rgb(' + Math.round(Math.random()*255) + ',' + Math.round(Math.random()*255) + ',' + Math.round(Math.random()*255) + ')';
     }
@@ -39,8 +44,5 @@ export default {
 </script>
 
 <style scoped>
-.list {
-  max-height: 200px;
-}
 
 </style>

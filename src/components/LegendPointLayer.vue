@@ -1,4 +1,5 @@
 <template>
+  <!-- Generates a legend container -->
   <v-container fluid>
     <v-card dark color="primary">
       <v-card-subtitle>Point Layer</v-card-subtitle>
@@ -20,7 +21,6 @@
 </template>
 
 <script>
-//import {bus} from "@/main";
 import {uuid} from 'vue-uuid'
 export default {
   name: "LegendPointLayer",
@@ -31,18 +31,10 @@ export default {
         {"ID": uuid.v1(), "Events": 400, "Color": "#359acc", "Text": "Patents"},
       ]
     }
-  },
-  methods: {
-    randomColor(){
-      return 'rgb(' + Math.round(Math.random()*255) + ',' + Math.round(Math.random()*255) + ',' + Math.round(Math.random()*255) + ')';
-    }
   }
 }
 </script>
 
 <style scoped>
-.list {
-  max-height: 200px;
-}
 
 </style>

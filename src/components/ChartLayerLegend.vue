@@ -1,4 +1,5 @@
 <template>
+  <!-- Generates a legend container -->
   <v-container fluid>
     <v-card dark color="primary" class="overflow-x-hidden">
       <v-card-subtitle>Chart patent Layer</v-card-subtitle>
@@ -26,6 +27,9 @@ export default {
   name: "ChartLayerLegend",
   data() {
     return {
+      /**
+       * Chart legend data for the pie chart
+       */
       chartLayer: [
         { "ID": uuid.v1(), "Text": 'A: Human Necessities', "Color": '#023858' },
         { "ID": uuid.v1(), "Text": 'B: Transporting / Performing Operations', "Color": '#045a8d' },
@@ -44,11 +48,5 @@ export default {
 </script>
 
 <style scoped>
-.list {
-  max-height: 200px;
-}
-.card-item {
-  overflow: hidden;
-}
 
 </style>

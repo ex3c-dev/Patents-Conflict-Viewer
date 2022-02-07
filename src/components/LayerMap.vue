@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Vuelayers map (open street map) -->
     <vl-map :load-tiles-while-animating="false" :load-tiles-while-interacting="false"
             data-projection="EPSG:4326" style="height: 100%; width: 100%">
       <!-- Map Legend -->
@@ -20,7 +21,7 @@
       </div>
       <!-- Map Legend end -->
 
-
+      <!-- VueLayers view that is responsible for generating popups on each vl-feature of a certain type -->
       <vl-view :zoom.sync="zoom" :center.sync="center" :rotation.sync="rotation">
         <vl-interaction-select v-if="drawType == null" :features.sync="selectedFeatures">
           <template>
@@ -35,14 +36,14 @@
                 :auto-pan-animation="{duration: 300}">
               <template>
                 <!-- Events - Kriege, Terrorismus etc -->
-                <v-card v-if="feature.properties.type == 'event'">
+                <v-card v-if="feature.properties.type === 'event'">
                   <v-img src="https://www.historynet.com/wp-content/uploads/2012/10/spotsylvania-header.jpg" height="200px"/>
                   <v-card-title>Event: {{feature.properties.event.COUNTRY}} - {{feature.properties.event.CITY}}</v-card-title>
                   <v-card-subtitle>{{feature.properties.event.ACTOR1}} vs {{feature.properties.event.TARGET1}}</v-card-subtitle>
                   <v-card-text style="max-height: 200px; overflow-y: auto;" v-html="feature.properties.event.SUMMARY" max-height="200" overflow-y-auto></v-card-text>
                 </v-card>
                 <!-- Patents -->
-                <v-card v-if="feature.properties.type == 'patent'">
+                <v-card v-if="feature.properties.type === 'patent'">
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px"/>
                   <v-card-title>Patent Office: {{feature.properties.data.patent_office}}</v-card-title>
                   <v-card-subtitle>{{feature.properties.data.name_0}} - {{feature.properties.data.name_1}}</v-card-subtitle>
@@ -60,6 +61,7 @@
         </vl-interaction-select>
       </vl-view>
 
+      <!-- Updates the geolocPosition when moving the mouse -->
       <vl-geoloc @update:position="geolocPosition = $event">
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
@@ -70,12 +72,17 @@
           </vl-feature>
         </template>
       </vl-geoloc>
+      <!-- EventAndPatenLayer is responsible for showing the conflict and patent points and the settings -->
       <EventAndPatentLayer></EventAndPatentLayer>
+      <!-- Open Street Map layer -->
       <vl-layer-tile id="osm">
         <vl-source-osm></vl-source-osm>
       </vl-layer-tile>
+      <!-- Timeline -->
       <Timeline class="timeline"></Timeline>
+      <!-- Vectormap show the vector conflict layers for each country -->
       <VectorMap class="vectorMap"></VectorMap>
+      <!-- Displays the charts on the map -->
       <Charts :zoom="zoom"></Charts>
     </vl-map>
   </div>
@@ -127,6 +134,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * Predefined function that gets the points from each vl-feature
+     */
     pointOnSurface: findPointOnSurface,
   },
 }

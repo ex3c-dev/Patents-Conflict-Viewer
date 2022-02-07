@@ -1,4 +1,5 @@
 <template>
+  <!-- Generates a legend container -->
   <v-container fluid>
     <v-card dark color="primary" class="overflow-x-hidden">
       <v-card-subtitle>Cluster patent Layer</v-card-subtitle>
@@ -32,16 +33,11 @@ export default {
       ]
     }
   },
-  created() {
-    /*
-    bus.$on('NumberOfEvents', (data) => {
-      console.log(data);
-      this.pointLayer = data.slice();
-      this.pointLayer.sort(function (a, b) {return a.Events - b.Events})
-    });
-    */
-  },
   methods: {
+    /**
+     * Generates a random rgb string for usage in css
+     * @returns {string}
+     */
     randomColor(){
       return 'rgb(' + Math.round(Math.random()*255) + ',' + Math.round(Math.random()*255) + ',' + Math.round(Math.random()*255) + ')';
     }
@@ -50,9 +46,6 @@ export default {
 </script>
 
 <style scoped>
-.list {
-  max-height: 200px;
-}
 .card-item {
   overflow: hidden;
 }

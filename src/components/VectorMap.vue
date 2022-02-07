@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Generates a vector layer to display the country conflicts -->
     <vl-layer-vector>
       <vl-feature
           v-for="feature in features"
@@ -21,7 +22,7 @@ import Vue from 'vue';
 import VueLayers from 'vuelayers';
 import FillStyle from 'vuelayers';
 import world from 'world-atlas/countries-110m.json';
-import {bus} from "../main";
+import {bus} from "@/main";
 import {uuid} from "vue-uuid";
 
 const topojson = require("topojson-client");
@@ -44,12 +45,19 @@ export default {
     }
   },
   created() {
+    /**
+     * Subscribes to the filtered-USD bus (filtered conflict data)
+     */
     bus.$on('filtered-USD', (data) => {
       this.conflictList = data;
     });
   },
   methods: {
 
+    /**
+     * Generates a country list and returns it
+     * @returns {*[]}
+     */
     genCountryList() {
       let list = [];
       this.activeLayers = [];
@@ -62,6 +70,11 @@ export default {
       return list;
     },
 
+    /**
+     * Counts the events for a given country.
+     * @param country Country to count the events.
+     * @returns {number} Number of events the country has.
+     */
     countEvents(country) {
       let eventCount = 0;
       this.conflictList.forEach((conflict) => {
@@ -73,6 +86,11 @@ export default {
       return eventCount;
     },
 
+    /**
+     * Colors the countries based on how many events it has.
+     * @param numbEvents Number of conflicts
+     * @returns {string} css rgba color string
+     */
     colorCountry(numbEvents) {
       if(numbEvents > 400) {
         this.addLayer({"ID": uuid.v1(), "Events": 400, "Color": "rgba(165,15,21,0.8)", "Text": "OVER 400 EVENTS"});
@@ -95,20 +113,28 @@ export default {
       }
     },
 
+    /**
+     * Pushes the layer to the active layers array, used for display and building the legend
+     * @param layer
+     */
     addLayer(layer){
       var contains = false;
       this.activeLayers.forEach((lay) => {
-        if(lay.Events == layer.Events){
+        if(lay.Events === layer.Events){
           contains = true
         }
       })
 
       if(!contains){
         this.activeLayers.push(layer);
-        //console.log(this.activeLayers);
       }
     },
 
+    /**
+     * Parses a polygon for a given feature. Used to create the country overlay
+     * @param feature
+     * @returns {*}
+     */
     parsePolygon(feature) {
       let coordinates = feature.geometry.coordinates;
       feature.geometry.type = "MultiPolygon";
@@ -116,6 +142,10 @@ export default {
       return feature;
     },
 
+    /**
+     * Loads the country features and renames a couple of countries (Difference in our patent and conflict db)
+     * @returns {Promise<unknown>}
+     */
     loadFeatures () {
       let countries = topojson.feature(world, world.objects.countries).features;
       const renameCountry = new Map([
@@ -152,10 +182,17 @@ export default {
   },
 
   watch: {
+    /**
+     * Watcher for the activeLayers. Push changes in the activeLayer to the bus
+     * @returns {Promise<void>}
+     */
     activeLayers: async function () {
       bus.$emit("NumberOfEvents", this.activeLayers);
-      console.log(this.activeLayers);
     },
+    /**
+     * Loads a feature if the conflictList changes.
+     * @returns {Promise<void>}
+     */
     conflictList: async function () {
       this.loading = true
       this.loadFeatures().then(features => {

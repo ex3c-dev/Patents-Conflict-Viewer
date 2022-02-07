@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Overlay to display patents and conflicts -->
     <div class="LayerSettings">
       <v-expansion-panels>
         <v-expansion-panel>
@@ -23,6 +24,7 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
+    <!-- Map overlay to diplay patents and conflict points-->
     <div v-if="patentLayerSwitch">
       <vl-feature
           v-for="cluster in clusters"
@@ -66,6 +68,11 @@ export default {
     }
   },
   methods: {
+    /**
+     * Spreads the conflict points by a random factor
+     * @param conflictPoints
+     * @returns {*[]}
+     */
     spreadPoints(conflictPoints) {
       let spreadPointList = [];
       conflictPoints.forEach((conflictPoint) => {
@@ -79,10 +86,15 @@ export default {
     }
   },
   created() {
+    /**
+     * Subscribes to the filter-patents bus
+     */
     bus.$on('filtered-patents', (data) => {
       this.clusters = data;
     });
-
+    /**
+     * Subscribes to the filter-USD (conflicts) bus
+     */
     bus.$on('filtered-USD', (data) => {
       const shuffled = data.sort(() => 0.5 - Math.random());
       const conflictPointNum = data.length / 10;
