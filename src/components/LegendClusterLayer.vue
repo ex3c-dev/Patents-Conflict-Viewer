@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-card dark color="primary" class="overflow-x-hidden">
-      <v-card-subtitle>Cluster Layer</v-card-subtitle>
+      <v-card-subtitle>Cluster patent Layer</v-card-subtitle>
       <v-divider/>
       <v-container>
         <v-row

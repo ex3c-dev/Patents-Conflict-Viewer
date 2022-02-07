@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-card dark color="primary" class="overflow-x-hidden">
-      <v-card-subtitle>Chart Layer</v-card-subtitle>
+      <v-card-subtitle>Chart patent Layer</v-card-subtitle>
       <v-divider/>
       <v-container>
         <v-row

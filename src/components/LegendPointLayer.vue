@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       pointLayer: [
-        {"ID": uuid.v1(), "Events": 400, "Color": "#640f12", "Text": "Events"},
+        {"ID": uuid.v1(), "Events": 400, "Color": "#640f12", "Text": "Conflict events"},
         {"ID": uuid.v1(), "Events": 400, "Color": "#359acc", "Text": "Patents"},
       ]
     }

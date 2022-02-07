@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-card dark color="primary">
-      <v-card-subtitle>Country Layer</v-card-subtitle>
+      <v-card-subtitle>Country conflict Layer</v-card-subtitle>
       <v-divider/>
       <v-container>
         <v-row
