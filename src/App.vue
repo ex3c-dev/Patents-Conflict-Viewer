@@ -4,7 +4,7 @@
     <v-app-bar app color="primaryDark" dark>
       <div class="d-flex align-center">
         <v-img alt="Team16 Logo" class="shrink mr-2" contain src="./assets/logo2.png" transition="scale-transition" width="40"/>
-        <v-img alt="Team16 Name" class="shrink mt-1 hidden-sm-and-down" contain min-width="100" src="./assets/team16.png" width="100"/>
+        <span style="font-size: 18pt; margin-left: 10px;">Team 16:  Correlation between patent registration and conflicts</span>
       </div>
     </v-app-bar>
 

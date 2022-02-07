@@ -5,8 +5,6 @@
         <v-list-item-title class="text-h6">
           Filter
         </v-list-item-title>
-        <TestComponent></TestComponent>
-
       </v-list-item-content>
     </v-list-item>
 

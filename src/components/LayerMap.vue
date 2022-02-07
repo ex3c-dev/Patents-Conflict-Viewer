@@ -75,7 +75,7 @@
       </vl-layer-tile>
       <Timeline class="timeline"></Timeline>
       <VectorMap class="vectorMap"></VectorMap>
-      <Charts></Charts>
+      <Charts :zoom="zoom"></Charts>
     </vl-map>
   </div>
 </template>

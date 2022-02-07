@@ -53,6 +53,9 @@ Vue.component('v-chart', ECharts)
 export default {
   name: "Charts",
   components: {},
+  props: {
+    zoom: Number,
+  },
   data() {
     return {
       centralPointsList: centralPoints,
