@@ -60,7 +60,7 @@ _Interactions:_
   - VueLayers and javascript is not suited to render millions of data points. One solution would be to recreate the map library in rust and webassembly for better performance.
   At the moment this issue is mitigated by having the individual patent point rendering turned off by default in the Layer Settings drawer.
 
-**Nice-to-have features**
+**Nice-to-have features (not implemented)**
 - Popup: Dynamic image loading for locations
 - Make country names more visible in colored countries
 
