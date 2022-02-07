@@ -38,6 +38,11 @@ export default {
   },
 
   watch: {
+    /**
+     * Sends event when user selects conflict target for filtering
+     * @returns {Promise<void>}
+     * @constructor
+     */
     TargetTypes: async function () {
 
       bus.$emit('selected-targets', this.TargetTypes)

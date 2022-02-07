@@ -77,6 +77,10 @@ export default {
   },
 
   watch: {
+    /**
+     * Sends event when user selects patent types for filtering
+     * @returns {Promise<void>}
+     */
     selSections: async function () {
       this.sectionCodes = [];
       this.selSections.forEach(el => {
@@ -86,7 +90,6 @@ export default {
       })
 
       bus.$emit('selected-types', this.sectionCodes)
-
     }
   },
 }

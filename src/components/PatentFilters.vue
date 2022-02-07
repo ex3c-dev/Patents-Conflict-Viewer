@@ -1,7 +1,5 @@
 <template>
   <div class="card text-center m-3">
-
-
     <v-autocomplete
         class="filter"
         v-model="selCountries"
@@ -16,35 +14,13 @@
         small-chips
         solo
     ></v-autocomplete>
-    <!-- Document Header Starts
-    <v-autocomplete
-        v-model="selCities"
-        :items="cityList"
-        label="Cities"
-        auto-select-first
-        clearable
-        deletable-chips
-        dense
-        multiple
-        rounded
-        small-chips
-        solo
-    ></v-autocomplete>
-
-    <patent-type-filter :test=this.selCountries />
-
-  -->
-
   </div>
 </template>
 
 <script>
 import countryList from "../countryList.json";
 import {bus} from "@/main";
-//const cities = require('all-the-cities');
 
-
-//TODO: create new country list and add missing countries / countries with alternate names from USD database
 export default {
   name: "PatentFilters",
   data() {
@@ -64,6 +40,10 @@ export default {
   },
 
   watch: {
+    /**
+     * Sends event when user selects countries for filtering
+     * @returns {Promise<void>}
+     */
     selCountries: async function () {
 
       bus.$emit('selected-countries', this.selCountries)

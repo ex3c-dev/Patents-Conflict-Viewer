@@ -45,6 +45,11 @@ export default {
     PatentFilters
   },
 
+
+  /**
+   * Listen to relevant events and prepare data for initial visualization
+   * @returns {Promise<void>}
+   */
   async created() {
 
     bus.$on('selected-countries', (selCountries) => {
@@ -117,6 +122,11 @@ export default {
   //TODO: Somewhere some id filter list needs to be emptied.
   watch: {
 
+    /**
+     * Filters patents per patent type
+     *
+     * @returns {Promise<void>}
+     */
     selSections: async function () {
 
       //Prepare request string
@@ -155,16 +165,22 @@ export default {
 
   methods: {
 
+    /**
+     * Gets patents taking filters into consideration
+     * Processes returned data for further use
+     * Emits data in events
+     */
     sendPatentFilterRequest: function () {
-      //Create Request
+
+      //Create request string
       this.request = this.baseUrl + this.geoc + this.regionSearchStr + this.typeSearchStr + "&&filing_date=lte." + this.dateTo + "&&filing_date=gte." + this.dateFrom
 
-      //Send request and save filtered IDS for further filtering
+      //Send request and use returned IDS for further filtering
       this.sendRequest(this.request).then(async (response) => {
 
         if (response !== undefined) {
 
-          //Postgrest API can't handle all IDs in query at once
+          //Postgrest API does not allow all IDs in query at once, break it into chunks
           let i, temporary
           let slice = 5000
 
@@ -173,13 +189,14 @@ export default {
             this.idStr = ""
             temporary = response.slice(i, i + slice);
 
+            //Get missing data for pie chart
             temporary.forEach((tmp, index) => {
 
               this.countryFilterIDs.push(tmp.appln_id)
               this.joinedPatents.set(tmp.appln_id, tmp)
               this.joinedPatents.get(tmp.appln_id).patentType = []
 
-              //Create second request string
+              //Create request string
               if (index < temporary.length - 1) this.idStr += tmp.appln_id + ","
               else if (temporary.length === 1) this.idStr = tmp.appln_id
               else this.idStr += tmp.appln_id
@@ -191,8 +208,8 @@ export default {
             this.sendRequest(this.request2).then(async (response2) => {
 
               if (response2 !== undefined) {
-                // maps patent ID to json object with all necessary information from both tables
-                //TODO some patents have the patent type missing
+                // maps patent ID to json object with all necessary information from both tables for pie chart
+                // some patents have the patent type missing
                 response2.forEach((type) => {
                   if (this.joinedPatents.has(type.appln_id)) {
                     let tmp = this.joinedPatents.get(type.appln_id)
@@ -213,6 +230,10 @@ export default {
       })
     },
 
+    /**
+     * Prepares request string for patents
+     * @returns {Promise<void>}
+     */
     filterPatents: async function() {
       //Prepare request string
       this.countryFilterIDs = []
@@ -220,23 +241,24 @@ export default {
       this.regionSearchStr = ""
       this.idStr = ""
 
+      //Prepare request string
       if (this.selCountries.length !== 0) {
         this.regionSearchStr = "name_0=in.(" + this.selCountries[0]
         this.selCountries.forEach((country) => {if (this.selCountries[0]!== country) this.regionSearchStr += ("," + country)})
         this.regionSearchStr += (")")
       }
 
-      //break ids into separate chunks for API call
+      //Add IDs (if any) that were selected in section filter to request string
       if(this.selSections.length > 0) {
         let i, temporary
         let slice = 5000
+        //Postgrest API does not allow all IDs in query at once, break it into chunks
         for (i = 0; i < this.selSections.length; i += slice) {
 
           this.idStr = ""
           temporary = this.selSections.slice(i, i + slice);
 
           temporary.forEach(() => {
-            //Filter IDs that were selected in section filter
             if(this.selSections.length > 0) {
               this.typeSearchStr = this.formatIDfilter(this.temporary)
             }
@@ -248,6 +270,10 @@ export default {
       }
     },
 
+    /**
+     * Filters USD conflict database
+     * @returns {Promise<void>}
+     */
     filterEvents: async function() {
       //map function to rename countries to match conflict dataset
       const mapConflictCountry = new Map([
@@ -281,7 +307,7 @@ export default {
       if (this.selTargets.length < 1) str3 = this.targetList
       else str3 = this.selTargets
 
-      //rename country list to fit conflict dataset
+      //rename country list to work with conflict dataset
       str1 = str1.map(countryName => (mapConflictCountry.get(countryName) || countryName));
 
       //filter USD Database
@@ -299,6 +325,11 @@ export default {
       bus.$emit('filtered-USD', filteredUSD)
     },
 
+    /**
+     * Formats request string
+     * @param ids
+     * @returns {string}
+     */
     formatIDfilter(ids) {
       let str = ""
       if(ids !== undefined && ids.length > 0) {
@@ -312,11 +343,22 @@ export default {
       return str
     },
 
+    /**
+     * Takes a request string and sends a paginated get request. Returns request data
+     * @param req
+     * @param start
+     * @param end
+     * @param first
+     * @returns {Promise<AxiosResponse<any>>}
+     */
     sendRequest: async function(req, start=0, end, first = true) {
 
+      //offset and limit for pagination
+      //The limit and small offset are necessary since either the server can't keep up or the configuration isn't ideal.
       let offset = 2000
       let maxLimit = 8000
 
+      //prepares header
       let config = {
         headers: {
           //"range-unit": "items",
@@ -325,12 +367,13 @@ export default {
         }
       }
 
+      //Prepare request string
       let reqString = req + "&&limit=" + offset + "&&offset=" + start
 
       return axios.get(reqString, config)
           .then( response => {
 
-                console.log("Fetched " + response.data.length + " results")
+                //console.log("Fetched " + response.data.length + " results")
 
                 let max = parseInt (response.headers["content-range"].split("/")[1])
                 let curSt = parseInt(response.headers["content-range"].split("/")[0].split("-")[0])
@@ -342,9 +385,8 @@ export default {
                 curSt += offset
                 curEnd += offset
 
-                //Pagination
-                //The limit is necessary since either the server can't keep up or the configuration isn't ideal.
-                //Otherwhise, the min operation can be removed and the offset enlarged.
+                //Pagination. Recursively gets page ranges until row limit is reached
+                //Otherwhise, the min operation can be removed and the offset made bigger.
                 if((curEnd - 1)  <=  Math.min(max,maxLimit)) {
                   return this.sendRequest(req, curSt, "", false)
                 }

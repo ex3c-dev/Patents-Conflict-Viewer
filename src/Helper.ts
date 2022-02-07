@@ -46,7 +46,7 @@ export default {
 
         /**
          * Function to get number of registered patents in each country.
-         * Is only run once and result is stored locally to save ressources.
+         * Is only run once and result is stored locally to save resources.
          */
         getPatentCountForCountry: async function() {
 
