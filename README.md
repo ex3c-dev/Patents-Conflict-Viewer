@@ -30,52 +30,49 @@ http://infoviz-team16.ex3c.de
 - Map with  juxtaposition of data and tools for filtering/manipulation
 
 _Interactions:_
-- Zoom functionality
-- Map filters
-- Moving tool
-- Timeline
+- Zoom and moving functionality
+- Zoom tool
+- Filtering sidebar
+- Timeline filtering
 - “On-Map-Clicking”
-- Buttons / Clusters
+- Tooltip information when hovering pie chart clusters
+- turn layers on and off in collapsible  Layer Settings drawer
+- collapse Map Legend drawer
 
 **Current Feature List:**
 - Zoom and moving functionality
 - Patent and conflict data visualization
+  - individually
+  - in clusters with pie chart (patent data) and heat map (conflict data)
+- visualization layers: show/hide individual data points from both datasets
 - Patent and conflict data filtering
 - Dynamic map interactions
 - Timeline and histogram
 - Dynamic legend
-
+- Collapsible filter bar
 
 **Known Issues:**
-- Response paging not yet implemented
-- Clusters not yet implemented 
-- Issue when filtering while a popup is open
-
-**Planned features**
-- Implement response paging
-- Implement patent cluster visualization
-- Finish popup on map interaction with informations about patents, events and countries.
-- Spread event points over the country
-- Better differentiation between individual patents and events
-
+- some patents are missing patent type information
+- not all patents are fetched from database, therefore the pie charts only show a subset of the dataset. This results from a server-side issue
+- Individual patent data rendering:
+  - VueLayers and javascript is not suited to render millions of data points. One solution would be to recreate the map library in rust and webassembly for better performance.
+  At the moment this issue is mitigated by having the individual patent point rendering turned off by default in the Layer Settings drawer.
 
 **Nice-to-have features**
-- Collapsible filter bar
 - Popup: Dynamic image loading for locations
-- Divide patent type into subcategories
 - Make country names more visible in colored countries
-- Filter Histogram
-
-
-
-
-
-
-
 
 **Results:**
+- altough conflict dataset does not show conflicts in western countries prior to 2014, where the patent database ends, we can still infer some interesting points:
+  - Countries that are historically more stable and developed also have more registered patents
+  - All first-world countries have patents registered
+  - many third-world countries and countries that have been in conflict over an extended period of time have no patents registered
+  - however, a high conflict incidence does not always correlate to the number of registered patents. 
+    - many more external factors come into play as well
+    - the time range of the conflicts is also not directly readable from the heat map.
+    - A good example for this is India
 
-## Project setup
+## Project setups
 
 Install node.js version 16.13.0. Clone project & install dependencies with the following command.
 
