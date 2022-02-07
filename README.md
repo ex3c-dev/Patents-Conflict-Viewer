@@ -70,7 +70,7 @@ _Interactions:_
   - All first-world countries have patents registered
   - many third-world countries and countries that have been in conflict over an extended period of time have no patents registered
   - However, a high conflict incidence does not always correlate to the number of registered patents. 
-    - A good example for this is India
+    - A good example this are the BRICS nations (Brazil, Russia, India, China and South Africa): they are developing nations experiencing strong economic growth
     - Many more external factors outside the scope of this project come into play as well
     - It is also important to keep in mind that the time range of the conflicts is not directly readable from the heat map prior to filtering
 
