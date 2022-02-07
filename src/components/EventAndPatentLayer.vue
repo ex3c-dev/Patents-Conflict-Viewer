@@ -43,8 +43,8 @@
         </vl-geom-point>
         <vl-style-box>
           <vl-style-circle :radius="5">
-            <vl-style-fill color="#13BF9B"></vl-style-fill>
-            <vl-style-stroke color="#064034"></vl-style-stroke>
+            <vl-style-fill color="#640f12"></vl-style-fill>
+            <vl-style-stroke color="#3b0e0f"></vl-style-stroke>
           </vl-style-circle>
         </vl-style-box>
       </vl-feature>
