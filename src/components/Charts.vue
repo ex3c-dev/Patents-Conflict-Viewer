@@ -8,7 +8,9 @@
         :id="patentChart.name">
       <template>
         <div style="width:100px; height:100px">
-          <v-chart :option="patentChart.options"></v-chart>
+            <v-chart
+                :option="patentChart.options">
+            </v-chart>
         </div>
       </template>
     </vl-overlay>
@@ -165,7 +167,11 @@ export default {
                 left: 'center',
                 top: 20,
                 textStyle: {
-                  color: '#ccc'
+                  color: '#000',
+                  textBorderWidth: 1,
+                  textBorderType: 'solid',
+                  textBorderColor: '#fff',
+                  fontSize: 10
                 }
               },
               tooltip: {
@@ -217,7 +223,7 @@ export default {
                   }
                 ],
                 radius: chartSize,
-                color: ['#023858', '#045a8d', '#0570b0', '#3690c0',
+                color: ['#034874', '#045a8d', '#0570b0', '#3690c0',
                   '#74a9cf', '#a6bddb', '#d0d1e6', '#ece7f2',
                   '#868686']
               }
