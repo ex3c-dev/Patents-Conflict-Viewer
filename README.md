@@ -69,10 +69,10 @@ _Interactions:_
   - Countries that are historically more stable and developed also have more registered patents
   - All first-world countries have patents registered
   - many third-world countries and countries that have been in conflict over an extended period of time have no patents registered
-  - however, a high conflict incidence does not always correlate to the number of registered patents. 
-    - many more external factors come into play as well
-    - the time range of the conflicts is also not directly readable from the heat map.
+  - However, a high conflict incidence does not always correlate to the number of registered patents. 
     - A good example for this is India
+    - Many more external factors outside the scope of this project come into play as well
+    - It is also important to keep in mind that the time range of the conflicts is not directly readable from the heat map prior to filtering
 
 ## Project setups
 
