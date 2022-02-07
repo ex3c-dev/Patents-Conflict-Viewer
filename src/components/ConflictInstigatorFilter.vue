@@ -25,7 +25,6 @@ export default {
   name: "ConflictInstigatorFilter",
 
   created() {
-
     conflictData.forEach((event) => {this.InstigatorList.push(event.ACTOR1)})
   },
 
@@ -39,6 +38,11 @@ export default {
   },
 
   watch: {
+    /**
+     * Sends event when user selects conflict instigator for filtering
+     * @returns {Promise<void>}
+     * @constructor
+     */
     InstigatorTypes: async function () {
 
       bus.$emit('selected-instigagors', this.InstigatorTypes)

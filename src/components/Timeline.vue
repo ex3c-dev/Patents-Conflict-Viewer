@@ -66,6 +66,10 @@ name: "Timeline",
 
   methods: {
 
+    /**
+     * Send event with slider changes for filtering
+     * @param values
+     */
     sliderChanged(values){
       this.startDate= new Date(values.from)
       this.endDate = new Date(values.to)
