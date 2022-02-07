@@ -10,7 +10,7 @@
         :drag-interval="true"
         :force-edges="false"
         :keyboard="true"
-        :colors="['#FF4B24', '#FF7424']"
+        :colors="['#000', '#000']"
         :primaryColor="'#FF4B24'"
         :handleColor="'#FF4B24'"
         :holderColor="'black'"
