@@ -31,6 +31,15 @@
                 </v-card-actions>
               </v-row>
             </v-container>
+            <v-container v-if="card.title == 'Histogram'">
+              <v-row dense v-for="l in timeline" :key="l.text">
+                <v-card-actions>
+                  <v-icon x-small :color="l.color">{{l.icon}}</v-icon>
+                  <v-btn color="white lighten-2" text v-text="l.text" height="10px"> </v-btn>
+                </v-card-actions>
+              </v-row>
+            </v-container>
+
           </v-card>
         </v-col>
       </v-row>
@@ -47,6 +56,8 @@ export default {
       { title: 'Point layers', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 4 },
       { title: 'Country layers', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 4 },
       { title: 'Cluster layers', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 4 },
+      { title: 'Histogram', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 4 },
+
     ],
     pointLayer: [
       { text: 'Battles', icon: 'mdi-checkbox-blank-circle', color: '#ffdc51' },
@@ -70,7 +81,9 @@ export default {
       { text: 'F41 - Weapons', icon: 'mdi-hexagon', color: '#9ff1bf' },
       { text: 'A61 - Medical or veterinary science; hygiene', icon: 'mdi-hexagon', color: '#f0f3a6' },
     ],
-
+    timeline: [
+      { text: 'Line Height : Number of events', icon: 'mdi-square', color: '#000' },
+    ],
 
   }),
 }
