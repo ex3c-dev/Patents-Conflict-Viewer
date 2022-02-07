@@ -13,6 +13,7 @@
               <LegendPointLayer/>
               <LegendCountryLayer/>
               <ChartLayerLegend/>
+              <HistogramLayer/>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -93,6 +94,7 @@ import LegendPointLayer from "@/components/LegendPointLayer";
 import EventAndPatentLayer from "@/components/EventAndPatentLayer";
 import Charts from "@/components/Charts";
 import ChartLayerLegend from "@/components/ChartLayerLegend";
+import HistogramLayer from "./HistogramLayer";
 
 Vue.use(VueLayers)
 Vue.use(FillStyle)
@@ -106,7 +108,8 @@ export default {
     LegendPointLayer,
     Timeline,
     VectorMap,
-    LegendCountryLayer
+    LegendCountryLayer,
+    HistogramLayer,
   },
   data () {
     return {
