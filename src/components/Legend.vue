@@ -56,6 +56,8 @@ export default {
       { title: 'Point layers', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 4 },
       { title: 'Country layers', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 4 },
       { title: 'Cluster layers', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 4 },
+      { title: 'Histogram', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 4 },
+
     ],
     pointLayer: [
       { text: 'Battles', icon: 'mdi-checkbox-blank-circle', color: '#ffdc51' },

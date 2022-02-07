@@ -5,12 +5,12 @@
       <v-divider/>
       <v-container>
         <v-row
-            v-for="layer in pointLayer"
+            v-for="layer in timeline"
             :key="layer.ID"
             :id="layer.ID"
             dense>
           <v-card-actions>
-            <v-icon x-small :color="layer.Color">mdi-checkbox-blank-circle</v-icon>
+            <v-icon x-medium :color="layer.Color">mdi-chart-bar</v-icon>
             <v-btn color="white lighten-2" text v-text="layer.Text" height="10px"></v-btn>
           </v-card-actions>
         </v-row>
@@ -25,7 +25,7 @@ export default {
   name: "HistogramLayer",
   data() {
     return {
-      pointLayer: [
+      timeline: [
         {"ID": uuid.v1(), "Events": 400, "Color": "#000", "Text": "Line Height : Number of events"},
       ]
     }
