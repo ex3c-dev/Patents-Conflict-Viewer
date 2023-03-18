@@ -1,8 +1,5 @@
 # infoviz - Group 16 - Correlation between patent registration and conflict zones
 
-**Website link:**
-http://infoviz-team16.ex3c.de
-
 Note: Project is optimized for chromium-based browsers
 
 **Introduction Team:**
